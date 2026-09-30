@@ -1,0 +1,2157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Duelo Matemático — Edición Tesis v3.4</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#060a14;--bg2:#0d1321;--card:rgba(13,19,33,.9);--border:rgba(51,65,85,.55);--text:#e2e8f0;--muted:#64748b;
+--accent:#f59e0b;--accent2:#fbbf24;--ok:#10b981;--bad:#ef4444;--blue:#3b82f6;--red:#ef4444;
+--fd:'Orbitron',monospace;--fb:'Space Grotesk',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);min-height:100vh}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#334155;border-radius:3px}
+.container{max-width:1050px;margin:0 auto;padding:14px;position:relative;z-index:1}
+
+/* HEADER */
+header{display:flex;align-items:center;gap:16px;padding:22px 4px 14px;border-bottom:1px solid var(--border);margin-bottom:16px;flex-wrap:wrap}
+#logoImg{width:72px;height:72px;object-fit:contain;background:#fff;border-radius:14px;padding:6px;box-shadow:0 4px 18px rgba(0,0,0,.5)}
+header h1{font-family:var(--fd);font-size:clamp(1.05em,3vw,1.7em);color:var(--accent2);letter-spacing:1px;text-shadow:0 0 30px rgba(245,158,11,.25)}
+header .sub{color:var(--muted);font-size:.8em;margin-top:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+header .gear{margin-left:auto}
+
+/* PANELES */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.panel h2{font-family:var(--fd);color:var(--accent2);font-size:.95em;letter-spacing:1px;margin-bottom:14px}
+.hint{color:var(--muted);font-size:.83em;line-height:1.5}
+
+/* FORMULARIOS */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.field label{font-size:.72em;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+input,select{background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--fb);font-size:.92em;width:100%}
+input:focus,select:focus{outline:none;border-color:var(--accent)}
+input[type=color]{padding:2px;height:38px}
+
+/* BOTONES */
+.btn{padding:11px 22px;border:none;border-radius:10px;font-family:var(--fb);font-weight:700;font-size:.92em;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-p{background:var(--accent);color:#000}.btn-s{background:var(--bg2);color:var(--text);border:1px solid var(--border)}
+.btn-d{background:var(--bad);color:#fff}.btn-ok{background:var(--ok);color:#fff}
+.btn-wa{background:#25d366;color:#fff}
+.controls-bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:.75em;font-weight:700}
+.b-ok{background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.4)}
+.b-warn{background:rgba(245,158,11,.15);color:#fde68a;border:1px solid rgba(245,158,11,.4)}
+.b-bad{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.4)}
+
+/* TARJETAS DE MODO */
+.mode-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0}
+.mode-card{padding:18px 12px;border:2px solid var(--border);border-radius:14px;cursor:pointer;text-align:center;background:var(--bg2);transition:all .22s}
+.mode-card:hover:not(.disabled){border-color:var(--accent);transform:translateY(-3px)}
+.mode-card.active{border-color:var(--accent);background:rgba(245,158,11,.08)}
+.mode-card.disabled{opacity:.4;cursor:not-allowed}
+.mode-card i{font-size:1.9em;color:var(--accent);margin-bottom:8px;display:block}
+.mode-card h3{font-size:.92em;margin-bottom:5px}
+.mode-card p{color:var(--muted);font-size:.73em;line-height:1.4}
+
+/* CONTADORES */
+.cnt-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.cnt{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.cnt .n{font-family:var(--fd);font-size:1.5em;font-weight:700}
+.cnt .l{font-size:.7em;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.cnt.f .n{color:#34d399}.cnt.m .n{color:#fbbf24}.cnt.d .n{color:#f87171}
+
+/* BOTONES DIFICULTAD */
+.diff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.diff-btn{padding:14px 8px;border:2px solid transparent;border-radius:12px;font-size:.95em;font-weight:700;cursor:pointer;color:#fff;transition:all .2s;font-family:var(--fb);text-align:center}
+.diff-btn:hover:not(:disabled){transform:translateY(-3px)}
+.diff-btn:disabled{opacity:.35;cursor:not-allowed}
+.diff-btn .pts{display:block;font-weight:400;font-size:.75em;opacity:.9}
+.diff-btn .ev{display:block;font-size:.68em;opacity:.75}
+.dF{background:linear-gradient(135deg,#059669,#10b981)}.dM{background:linear-gradient(135deg,#d97706,#f59e0b)}.dD{background:linear-gradient(135deg,#b91c1c,#dc2626)}
+
+/* TEMPORIZADORES — v3.4: rotación SOLO en los círculos, número horizontal */
+.timer-wrap{display:flex;justify-content:center;gap:34px;margin:10px 0}
+.timer-box{text-align:center;display:none}
+.timer-label{font-size:.68em;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.timer-ring{width:76px;height:76px}
+.ring-bg{fill:none;stroke:var(--bg2);stroke-width:7}
+.ring-progress{fill:none;stroke:var(--ok);stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .9s linear}
+.timer-num{font-family:var(--fd);font-size:1.35em;font-weight:700;fill:var(--text);text-anchor:middle}
+
+/* TURNO */
+.turn-ind{text-align:center;padding:10px;border-radius:10px;font-family:var(--fd);font-weight:700;letter-spacing:1px;font-size:.95em;margin:8px 0}
+.t-blue{background:rgba(59,130,246,.14);color:#93c5fd;border:1px solid rgba(59,130,246,.45)}
+.t-red{background:rgba(239,68,68,.14);color:#fca5a5;border:1px solid rgba(239,68,68,.45)}
+.t-gold{background:rgba(245,158,11,.12);color:#fde68a;border:1px solid rgba(245,158,11,.45)}
+
+/* MARCADOR */
+.scoreboard{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;margin-bottom:8px}
+.team{text-align:center;padding:14px 8px;border-radius:12px}
+.team.blue{background:linear-gradient(135deg,#1d4ed8,#3b82f6)}.team.red{background:linear-gradient(135deg,#b91c1c,#ef4444)}
+.team h3{font-family:var(--fd);font-size:.8em;letter-spacing:1px}
+.team .sc{font-family:var(--fd);font-size:2.4em;font-weight:900;text-shadow:0 3px 10px rgba(0,0,0,.5)}
+.team .dt{font-size:.7em;opacity:.85}
+.vs{font-family:var(--fd);color:var(--accent2);font-size:1.4em}
+.rope-wrap{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+#ropeCanvas{display:block;width:100%;height:180px}
+.rope-label{position:absolute;top:8px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;padding:3px 14px;border-radius:20px;font-weight:700;font-size:.78em;font-family:var(--fd)}
+
+/* PREGUNTA */
+.q-box{background:var(--bg);border:2px solid var(--accent);border-radius:14px;padding:20px;margin-top:10px}
+.q-head{color:var(--accent2);font-family:var(--fd);font-size:.78em;letter-spacing:1px}
+.q-text{font-size:1.28em;text-align:center;margin:14px 0;min-height:44px;font-weight:600;line-height:1.45}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.opt{padding:13px;background:var(--bg2);border:2px solid var(--border);color:var(--text);border-radius:10px;font-size:1em;cursor:pointer;transition:all .15s;font-weight:600;font-family:var(--fb);text-align:left}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:not-allowed}
+.opt.ok{background:var(--ok)!important;border-color:#34d399!important;color:#fff}
+.opt.no{background:var(--bad)!important;border-color:#f87171!important;color:#fff}
+.opt b{color:var(--accent2);margin-right:8px;font-family:var(--fd);font-size:.85em}
+.feedback{text-align:center;font-size:1.05em;margin-top:12px;padding:12px;border-radius:10px;font-weight:700;min-height:46px}
+.fb-ok{background:rgba(16,185,129,.13);color:#6ee7b7;border:1px solid rgba(16,185,129,.3)}
+.fb-no{background:rgba(239,68,68,.13);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+.fb-to{background:rgba(245,158,11,.13);color:#fde68a;border:1px solid rgba(245,158,11,.3)}
+
+/* ONLINE + INVITACIÓN */
+.room-code{font-family:var(--fd);font-size:2em;font-weight:900;color:var(--accent2);letter-spacing:6px;text-align:center;background:var(--bg);border:2px dashed var(--accent);border-radius:12px;padding:12px;margin-bottom:12px}
+.standings{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:12px}
+.st-row{display:flex;align-items:center;gap:10px;padding:7px 10px;border-bottom:1px solid rgba(51,65,85,.35);font-size:.92em}
+.st-row:last-child{border-bottom:none}
+.st-row .pos{font-family:var(--fd);color:var(--muted);width:26px}
+.st-row .nm{flex:1;font-weight:600}
+.st-row .pt{font-family:var(--fd);font-weight:700;color:var(--accent2)}
+.st-row .rdy{font-size:.8em}
+.st-row.me{background:rgba(245,158,11,.07);border-radius:8px}
+.invite-box{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+.invite-grid{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;margin-top:10px}
+#qrBox{background:#fff;padding:8px;border-radius:10px;width:206px;height:206px;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.invite-actions{display:flex;flex-direction:column;gap:8px}
+
+/* MODAL BIENVENIDA */
+.modal-bg{position:fixed;inset:0;background:rgba(2,6,17,.85);backdrop-filter:blur(5px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:26px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.modal h2{font-family:var(--fd);color:var(--accent2);font-size:1.1em;margin-bottom:8px;letter-spacing:1px}
+
+/* PODIO */
+.podium-row{display:flex;justify-content:center;align-items:flex-end;gap:14px;margin:22px 0 10px;flex-wrap:wrap}
+.pod{text-align:center;border-radius:14px;padding:18px 16px;min-width:150px;border:2px solid var(--border);background:var(--bg2)}
+.pod .medal{font-size:2.4em}
+.pod .pn{font-weight:700;font-size:1.05em;margin:6px 0 2px}
+.pod .pp{font-family:var(--fd);font-size:1.5em;font-weight:900;color:var(--accent2)}
+.pod .ps{font-size:.75em;color:var(--muted);margin-top:2px}
+.pod .pl{font-family:var(--fd);font-size:.7em;letter-spacing:2px;margin-top:8px;color:var(--muted)}
+.pod.p1{border-color:var(--accent);transform:scale(1.12);background:rgba(245,158,11,.08)}
+.pod.p1 .pl{color:var(--accent2)}
+.pod-rest{max-width:420px;margin:10px auto}
+.pr-row{display:flex;gap:10px;padding:7px 12px;background:var(--bg);border-radius:8px;margin-bottom:5px;font-size:.9em;border:1px solid var(--border)}
+
+/* TABS */
+.tab-bar{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px;flex-wrap:wrap}
+.tab-btn{padding:10px 20px;background:none;border:none;color:var(--muted);font-family:var(--fb);font-size:.9em;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent2);border-bottom-color:var(--accent)}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* TABLA */
+table{width:100%;border-collapse:collapse;font-size:.88em}
+th{color:var(--accent2);font-family:var(--fd);font-size:.72em;padding:9px;text-align:center;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+td{padding:9px;text-align:center;border-bottom:1px solid rgba(51,65,85,.3)}
+.pos{color:var(--ok)}.neg{color:var(--bad)}
+
+/* MONTE CARLO */
+.sim-controls{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;margin-bottom:14px}
+.sim-controls .field{margin-bottom:0}
+.sim-results{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:14px}
+.sim-stat{background:var(--bg);padding:14px;border-radius:10px;text-align:center;border:1px solid var(--border)}
+.sim-stat .sim-label{color:var(--muted);font-size:.78em}
+.sim-stat .sim-val{font-family:var(--fd);font-size:1.5em;font-weight:700;margin-top:4px}
+.sim-stat .blue-v{color:var(--blue)}.sim-stat .red-v{color:var(--red)}.sim-stat .draw-v{color:var(--muted)}
+.sim-bar{height:28px;border-radius:6px;overflow:hidden;display:flex;margin-top:12px;background:var(--bg2)}
+.sim-bar div{display:flex;align-items:center;justify-content:center;font-size:.75em;font-weight:700;color:#fff;transition:width .5s}
+.sim-bar .bar-blue{background:var(--blue)}.sim-bar .bar-draw{background:var(--muted)}.sim-bar .bar-red{background:var(--red)}
+.progress-bar{height:6px;background:var(--bg2);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .15s;width:0}
+
+/* STATS GRID */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.stat-card{background:var(--bg);padding:14px;border-radius:10px;text-align:center;border:1px solid var(--border)}
+.stat-card .s-label{color:var(--muted);font-size:.75em;text-transform:uppercase;letter-spacing:.5px}
+.stat-card .s-value{font-family:var(--fd);font-size:1.25em;font-weight:700;color:var(--accent2);margin-top:4px}
+
+/* BITÁCORA */
+.log-box{max-height:240px;overflow-y:auto;background:var(--bg);padding:12px;border-radius:10px;font-size:.85em;border:1px solid var(--border)}
+.log-entry{padding:6px 0;border-bottom:1px solid rgba(51,65,85,.3);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.log-entry .le-r{color:var(--muted);font-family:var(--fd);font-size:.78em;min-width:38px}
+.log-entry .le-t{font-weight:700;min-width:90px}
+.log-entry .le-d{font-size:.75em;padding:2px 8px;border-radius:4px;font-weight:600}
+.le-d.FACIL{background:rgba(16,185,129,.2);color:#6ee7b7}
+.le-d.MEDIO{background:rgba(245,158,11,.2);color:#fde68a}
+.le-d.DIFICIL{background:rgba(239,68,68,.2);color:#fca5a5}
+
+/* FLASH + TOAST */
+.screen-flash{position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0}
+.screen-flash.on-c{background:radial-gradient(circle,rgba(16,185,129,.22),transparent 70%);animation:fo .55s forwards}
+.screen-flash.on-w{background:radial-gradient(circle,rgba(239,68,68,.22),transparent 70%);animation:fo .55s forwards}
+.screen-flash.on-t{background:radial-gradient(circle,rgba(245,158,11,.2),transparent 70%);animation:fo .55s forwards}
+@keyframes fo{0%{opacity:1}100%{opacity:0}}
+.toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:10px;font-weight:700;font-size:.9em;z-index:10000;box-shadow:0 8px 30px rgba(0,0,0,.5);animation:tIn .3s;max-width:92vw;text-align:center}
+@keyframes tIn{from{opacity:0;transform:translate(-50%,-14px)}to{opacity:1;transform:translate(-50%,0)}}
+
+.hidden{display:none!important}
+
+/* ===== DEBATE EN LÍNEA · 2 EQUIPOS MONITOREADOS (v4) ===== */
+.mode-cards{grid-template-columns:repeat(auto-fit,minmax(175px,1fr))}
+.role-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.role-card{padding:16px 12px;border:2px solid var(--border);border-radius:14px;cursor:pointer;text-align:center;background:var(--bg2);transition:all .2s}
+.role-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.role-card.active{border-color:var(--accent);background:rgba(245,158,11,.08)}
+.role-card i{font-size:1.7em;color:var(--accent);display:block;margin-bottom:8px}
+.role-card h4{font-size:.88em;margin-bottom:4px;letter-spacing:.5px}
+.role-card p{color:var(--muted);font-size:.73em;line-height:1.45}
+.chk{display:flex;align-items:center;gap:8px;font-size:.85em;margin:10px 0;cursor:pointer}
+.chk input{width:auto}
+.btn-buzz{width:100%;padding:26px 16px;border:none;border-radius:18px;font-family:var(--fd);font-weight:900;font-size:clamp(1.2em,4vw,1.6em);letter-spacing:4px;color:#000;cursor:pointer;background:linear-gradient(135deg,#d97706,#f59e0b);box-shadow:0 8px 30px rgba(245,158,11,.35);transition:all .15s}
+.btn-buzz:not(:disabled):hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(245,158,11,.5)}
+.btn-buzz:disabled{filter:grayscale(.7);opacity:.35;cursor:not-allowed}
+#debRopeCanvas{display:block;width:100%;height:170px}
+#debQrBox{background:#fff;padding:8px;border-radius:10px;width:206px;height:206px;display:flex;align-items:center;justify-content:center;margin:0 auto;overflow:hidden}
+.deb-meta-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;margin:10px 0}
+.deb-win{font-family:var(--fd);font-weight:900;font-size:clamp(1.1em,3.5vw,1.6em);text-align:center;padding:16px;border-radius:14px;margin:8px 0;letter-spacing:2px}
+.deb-log-title{font-family:var(--fd);font-size:.8em;color:var(--accent2);letter-spacing:1px;margin:14px 0 8px}
+@media print{body *{visibility:hidden}#debateArea,#debateArea *{visibility:visible}#debateArea{position:absolute;left:0;top:0;width:100%}}
+
+@media(max-width:760px){.grid2,.mode-cards,.diff-grid,.opts{grid-template-columns:1fr}.scoreboard{grid-template-columns:1fr}.vs{display:none}
+.cnt-cards{grid-template-columns:1fr 1fr 1fr}.sim-controls{grid-template-columns:1fr}.sim-results{grid-template-columns:1fr}
+.invite-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="screen-flash" id="flash"></div>
+
+<!-- ============ MODAL DE BIENVENIDA ============ -->
+<div class="modal-bg hidden" id="modalWelcome">
+  <div class="modal">
+    <h2><i class="fas fa-network-wired"></i> CONEXIÓN AL JUEGO</h2>
+    <p class="hint" style="margin-bottom:14px">Bienvenido a <b>Duelo Matemático</b>. El sistema ya se conectó automáticamente. Solo escribe tu nombre para personalizar tu experiencia.</p>
+    <div class="field"><label>Tu nombre de jugador</label><input id="wNombre" maxlength="18" placeholder="Ej: S0LEDAD"/> </div>
+    <div class="field"><label>Servidor de juego (API) — solo si te lo indicaron</label>
+      <input id="wApi" placeholder="https://script.google.com/macros/s/.../exec"/></div>
+    <div class="controls-bar" style="justify-content:flex-end">
+      <button class="btn btn-p" onclick="entrarDesdeModal()"><i class="fas fa-arrow-right"></i> Entrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ============ HEADER ============ -->
+  <header>
+    <img id="logoImg" class="hidden" alt="Logo"/>
+    <div>
+      <h1 id="schoolName">DUELO MATEMÁTICO</h1>
+      <div class="sub">
+        <span>Simulación de decisiones bajo riesgo</span>
+        <span>·</span>
+        <span id="hdrEstado">Fuente: —</span>
+        <span class="badge b-bad" id="connBadge"><i class="fas fa-wifi"></i> Conectando...</span>
+      </div>
+    </div>
+    <button class="btn btn-s gear" onclick="togglePanel('panelAjustes')"><i class="fas fa-gear"></i> Ajustes</button>
+  </header>
+
+  <!-- ============ AJUSTES ============ -->
+  <section class="panel hidden" id="panelAjustes">
+    <h2><i class="fas fa-sliders"></i> CONFIGURACIÓN GENERAL</h2>
+    <div class="grid2">
+      <div>
+        <div class="field"><label>URL de la API (Apps Script /exec)</label>
+          <input id="inApi" placeholder="https://script.google.com/macros/s/AKfycbzLuxSwagbPAvWivY-YNSp1XwGV786ELQzriHEyx77V_l0Bnl8_T9aVtg12tNbMNzkp0Q/exec"/></div>
+        <div class="controls-bar" style="margin-top:0">
+          <button class="btn btn-s" onclick="probarConexion()"><i class="fas fa-plug"></i> Probar conexión</button>
+          <span id="apiStatus"></span>
+        </div>
+        <div class="field" style="margin-top:14px"><label>Logo del colegio (PNG/JPG)</label>
+          <input type="file" id="logoFile" accept="image/*"/></div>
+        <div class="field"><label>Nombre de la institución</label>
+          <input id="inColegio" placeholder="Ej: Unidad Educativa ..."/></div>
+        <div class="field"><label>Color institucional</label>
+          <input type="color" id="inColor"/></div>
+      </div>
+      <div>
+        <div class="grid2">
+          <div class="field"><label>Meta (ventaja p/ ganar)</label><input type="number" id="inMeta" min="3" max="30"/></div>
+          <div class="field"><label>Preguntas (modo solo)</label><input type="number" id="inNSolo" min="5" max="30"/></div>
+          <div class="field"><label>Tiempo elegir (seg)</label><input type="number" id="inTDiff" min="3" max="15"/></div>
+          <div class="field"><label>Tiempo responder (seg)</label><input type="number" id="inTQuest" min="5" max="60"/></div>
+          <div class="field"><label>P(acierto fácil)</label><input type="number" id="inPF" step="0.05" min="0.1" max="1"/></div>
+          <div class="field"><label>P(acierto intermedia)</label><input type="number" id="inPM" step="0.05" min="0.1" max="1"/></div>
+          <div class="field"><label>P(acierto difícil)</label><input type="number" id="inPD" step="0.05" min="0.1" max="1"/></div>
+          <div class="field"><label>Tu nombre de jugador</label><input id="inNombre" maxlength="18"/></div>
+        </div>
+        <div class="controls-bar">
+          <button class="btn btn-p" onclick="guardarAjustes()"><i class="fas fa-floppy-disk"></i> Guardar ajustes</button>
+        </div>
+        <p class="hint" style="margin-top:10px"><i class="fas fa-circle-info"></i> <b>Conexión automática:</b> pega tu URL en la constante <b>API_DEFAULT</b> (al inicio del script) y la página conectará sola cada vez que se abra. Si no hay conexión, el juego funciona con el banco interno de NÚMEROS RACIONALES.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTENIDO ============ -->
+  <section class="panel">
+    <h2><i class="fas fa-book-open"></i> 1 · SELECCIONA MATERIA Y TEMA</h2>
+    <div class="grid2">
+      <div>
+        <div class="field"><label>Materia</label>
+          <select id="inMateria" onchange="cargarTemas()"><option value="">— Cargando... —</option></select></div>
+        <div class="field"><label>Tema</label>
+          <select id="inTema"><option value="">— Selecciona materia —</option></select></div>
+        <div class="controls-bar">
+          <button class="btn btn-p" onclick="cargarPreguntas()"><i class="fas fa-cloud-arrow-down"></i> Cargar preguntas</button>
+          <button class="btn btn-s" onclick="recargarTodo()"><i class="fas fa-rotate"></i></button>
+        </div>
+      </div>
+      <div>
+        <div class="cnt-cards">
+          <div class="cnt f"><div class="n" id="cntF">0</div><div class="l">Fáciles · ±1</div></div>
+          <div class="cnt m"><div class="n" id="cntM">0</div><div class="l">Intermedias · ±2</div></div>
+          <div class="cnt d"><div class="n" id="cntD">0</div><div class="l">Difíciles · ±3</div></div>
+        </div>
+        <p class="hint" style="margin-top:10px">Fuente de datos: <span class="badge b-warn" id="fuenteBadge">—</span></p>
+        <p class="hint" style="margin-top:6px">La materia y el tema se seleccionan automáticamente al abrir la página. Puedes cambiarlos cuando quieras.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MODO DE JUEGO ============ -->
+  <section class="panel">
+    <h2><i class="fas fa-gamepad"></i> 2 · ELIGE EL MODO DE JUEGO</h2>
+    <div class="mode-cards">
+      <div class="mode-card" id="cardSolo" onclick="selectModo('solo')">
+        <i class="fas fa-stopwatch"></i><h3>PRÁCTICA INDIVIDUAL</h3>
+        <p>Responde preguntas contra el reloj. Tú decides el nivel de riesgo en cada turno.</p>
+      </div>
+      <div class="mode-card" id="cardCpu" onclick="selectModo('cpu')">
+        <i class="fas fa-robot"></i><h3>TIRA Y AFLOJA vs CPU</h3>
+        <p>Duelo clásico de cuerda contra el sistema. La CPU adapta su estrategia según el marcador.</p>
+      </div>
+      <div class="mode-card" id="cardDuelo" onclick="selectModo('duelo')">
+        <i class="fas fa-people-arrows"></i><h3>DUELO DE 2 EQUIPOS</h3>
+        <p>Azul contra Rojo en el mismo dispositivo. Turnos alternos con temporizador y cuerda.</p>
+      </div>
+      <div class="mode-card" id="cardOnline" onclick="selectModo('online')">
+	  <div class="mode-card" id="cardDebate" onclick="selectModo('debate')">
+  <i class="fas fa-chalkboard-user"></i><h3>DEBATE EN LÍNEA · MONITOREADO</h3>
+  <p>Dos equipos compiten en vivo desde sus dispositivos y el docente observa y controla el debate desde esta pantalla.</p>
+</div>
+        <i class="fas fa-globe"></i><h3>ONLINE MULTI-DISPOSITIVO</h3>
+        <p>Juega en vivo desde distintos lugares. Enlace, QR y código de sala para conectar a todos.</p>
+      </div>
+    </div>
+    <div id="onlineCfg" class="hidden">
+      <p class="hint" style="margin-bottom:8px"><i class="fas fa-list-ol"></i> Preguntas de la partida (el sistema las sortea intercalando niveles):</p>
+      <div class="grid3">
+        <div class="field"><label>Fáciles</label><input type="number" id="inNF" value="3" min="0" max="15"/></div>
+        <div class="field"><label>Intermedias</label><input type="number" id="inNM" value="4" min="0" max="15"/></div>
+        <div class="field"><label>Difíciles</label><input type="number" id="inND" value="3" min="0" max="15"/></div>
+      </div>
+      <div class="controls-bar">
+        <button class="btn btn-p" onclick="crearSala()"><i class="fas fa-tower-broadcast"></i> Crear sala (anfitrión)</button>
+      </div>
+      <div class="controls-bar" style="margin-top:6px">
+        <input id="inCodigoRoom" placeholder="CÓDIGO DE SALA" style="width:180px;text-transform:uppercase;letter-spacing:3px;font-family:var(--fd)"/>
+        <button class="btn btn-ok" onclick="unirseSala()"><i class="fas fa-right-to-bracket"></i> Unirse</button>
+      </div>
+    </div>
+    <div id="duelCfg" class="hidden" style="margin-top:10px">
+      <p class="hint" style="margin-bottom:8px"><i class="fas fa-keyboard"></i> Personaliza los nombres (ambos equipos se turnan en este dispositivo):</p>
+      <div class="grid2">
+        <div class="field"><label>Equipo 1 (Azul)</label><input id="inEqA" value="EQUIPO AZUL" maxlength="18"/></div>
+        <div class="field"><label>Equipo 2 (Rojo)</label><input id="inEqR" value="EQUIPO ROJO" maxlength="18"/></div>
+      </div>
+    </div>
+	
+	<div id="debateCfg" class="hidden" style="margin-top:10px">
+  <p class="hint" style="margin-bottom:8px"><i class="fas fa-chalkboard-user"></i> <b>Elige tu rol</b> — el docente crea y monitorea; los equipos compiten desde otros dispositivos:</p>
+  <div class="role-cards">
+    <div class="role-card" id="debRoleDoc" onclick="debRol('docente')">
+      <i class="fas fa-chalkboard-user"></i><h4>DOCENTE · MONITOR</h4>
+      <p>Crea la sala, define la cantidad de preguntas y la modalidad, y sigue todo el debate en su pantalla.</p>
+    </div>
+    <div class="role-card" id="debRoleEq" onclick="debRol('equipo')">
+      <i class="fas fa-users"></i><h4>EQUIPO ESTUDIANTIL</h4>
+      <p>Se conecta desde otro dispositivo con el código de sala. Azul entra primero, Rojo segundo.</p>
+    </div>
+  </div>
+  <div id="debDocenteForm" class="hidden">
+    <div class="grid2">
+      <div>
+        <div class="field"><label>Modalidad del debate</label>
+          <select id="debModalidad" onchange="debModHintUpd()">
+            <option value="A">A · Primero responde (timbre + rebote)</option>
+            <option value="B">B · Turnos alternos (duelo clásico)</option>
+          </select></div>
+        <div class="field"><label>Cantidad de preguntas</label><input type="number" id="debN" value="5" min="3" max="50"/></div>
+        <div class="field"><label>Segundos para timbrar (mod. A)</label><input type="number" id="debTBuzz" value="10" min="5" max="60"/></div>
+      </div>
+      <div>
+        <div class="field"><label>Segundos para responder</label><input type="number" id="debTResp" value="20" min="5" max="90"/></div>
+        <div class="field"><label>Segundos p/ elegir nivel (mod. B)</label><input type="number" id="debTDif" value="8" min="5" max="30"/></div>
+        <div class="field"><label>Meta visual de la cuerda</label><input type="number" id="debMeta" value="8" min="3" max="30"/></div>
+      </div>
+    </div>
+    <label class="chk"><input type="checkbox" id="debCastigo"/> Modalidad A: fallar tras timbrar <b>&nbsp;resta&nbsp;</b> puntos (−)</label>
+    <p class="hint" id="debModHint"></p>
+    <div class="controls-bar">
+      <button class="btn btn-p" onclick="debCrear()"><i class="fas fa-tower-broadcast"></i> Crear sala de debate</button>
+    </div>
+    <p class="hint" style="margin-top:8px"><i class="fas fa-circle-info"></i> Necesita preguntas cargadas (sección 1) y la API conectada. El sistema sortea preguntas intercalando los niveles.</p>
+  </div>
+  <div id="debEquipoForm" class="hidden">
+    <div class="grid2">
+      <div class="field"><label>Nombre del equipo</label><input id="debNombreEq" maxlength="18" placeholder="EJ: LOS TITANES"/></div>
+      <div class="field"><label>Código de sala</label><input id="debCodEq" maxlength="6" placeholder="ABC12" style="text-transform:uppercase;letter-spacing:3px;font-family:var(--fd)"/></div>
+    </div>
+    <div class="controls-bar">
+      <button class="btn btn-ok" onclick="debUnirse()"><i class="fas fa-right-to-bracket"></i> Unirse al debate</button>
+    </div>
+  </div>
+</div>
+	
+    <div class="controls-bar" id="rowComenzar">
+      <button class="btn btn-p" id="btnComenzar" onclick="btnComenzarClick()"><i class="fas fa-play"></i> Comenzar</button>
+      <span id="modeHint" class="hint" style="align-self:center"></span>
+    </div>
+  </section>
+
+  <!-- ============ ZONA DE JUEGO ============ -->
+  <section class="panel hidden" id="gamePanel">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <h2 style="margin:0"><i class="fas fa-trophy"></i> <span id="gInfo">—</span></h2>
+      <button class="btn btn-d" onclick="abandonar()"><i class="fas fa-door-open"></i> Salir</button>
+    </div>
+
+    <!-- MODO SOLO -->
+    <div id="soloArea" class="hidden" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0">
+      <div class="cnt"><div class="n" id="soloScore" style="color:var(--accent2)">0</div><div class="l">Puntaje</div></div>
+      <div class="cnt"><div class="n" id="soloProg">0/10</div><div class="l">Pregunta</div></div>
+      <div class="cnt"><div class="n" id="soloRacha" style="color:var(--ok)">0</div><div class="l">Racha</div></div>
+      <div class="cnt"><div class="n" id="soloMejor" style="color:var(--blue)">0</div><div class="l">Mejor racha</div></div>
+    </div>
+
+    <!-- MODO CUERDA -->
+    <div id="cpuArea" class="hidden">
+      <div class="scoreboard">
+        <div class="team blue"><h3 id="lblP">JUGADOR</h3><div class="sc" id="scoreP">0</div><div class="dt">✓ <span id="hP">0</span> · ✗ <span id="mP">0</span></div></div>
+        <div class="vs">VS</div>
+        <div class="team red"><h3 id="lblC">CPU</h3><div class="sc" id="scoreCpu">0</div><div class="dt">✓ <span id="hC">0</span> · ✗ <span id="mC">0</span></div></div>
+      </div>
+      <div class="rope-wrap"><canvas id="ropeCanvas"></canvas><div class="rope-label" id="ropeLabel">EQUILIBRIO</div></div>
+    </div>
+
+    <!-- MODO ONLINE -->
+    <div id="onlineArea" class="hidden">
+      <div class="room-code" id="roomCode">------</div>
+      <div class="invite-box" id="invitePanel">
+        <h3 style="font-family:var(--fd);font-size:.85em;color:var(--accent2);letter-spacing:1px"><i class="fas fa-share-nodes"></i> CONECTAR OTROS DISPOSITIVOS (desde cualquier lugar)</h3>
+        <div class="invite-grid">
+          <div id="qrBox"></div>
+          <div class="invite-actions">
+            <button class="btn btn-wa" onclick="compartirWhatsApp()"><i class="fab fa-whatsapp"></i> Invitar por WhatsApp</button>
+            <button class="btn btn-p" onclick="compartirSala()"><i class="fas fa-share-nodes"></i> Compartir invitación</button>
+            <button class="btn btn-s" onclick="copiarLink()"><i class="fas fa-link"></i> Copiar enlace + código</button>
+            <button class="btn btn-s" onclick="copiarCodigo()"><i class="fas fa-copy"></i> Copiar solo código</button>
+          </div>
+        </div>
+        <p class="hint" style="margin-top:10px"><i class="fas fa-globe"></i> Los demás dispositivos escanean el QR o abren el enlace y presionan <b>"Unirse"</b>. Si el QR no se genera, publica esta página en internet o envía el archivo directamente y que escriban el código a mano.</p>
+      </div>
+      <div class="standings" id="standings"><div style="text-align:center;color:var(--muted);padding:10px">Esperando jugadores...</div></div>
+      <div class="controls-bar" style="justify-content:center" id="rowIniciar">
+        <button class="btn btn-ok" id="btnIniciarOnline" onclick="iniciarOnline()"><i class="fas fa-flag-checkered"></i> Iniciar partida</button>
+      </div>
+    </div>
+
+<!-- ============ MODO DEBATE v4 ============ -->
+<div id="debateArea" class="hidden">
+  <div class="room-code" id="debRoomCode">-----</div>
+
+  <div id="debSala">
+    <div class="invite-box hidden" id="debInvite">
+      <h3 style="font-family:var(--fd);font-size:.85em;color:var(--accent2);letter-spacing:1px"><i class="fas fa-share-nodes"></i> CONECTA A LOS DOS EQUIPOS</h3>
+      <div class="invite-grid">
+        <div id="debQrBox"></div>
+        <div class="invite-actions">
+          <button class="btn btn-wa" onclick="debWa()"><i class="fab fa-whatsapp"></i> Invitar por WhatsApp</button>
+          <button class="btn btn-p" onclick="debShare()"><i class="fas fa-share-nodes"></i> Compartir invitación</button>
+          <button class="btn btn-s" onclick="debCopyLink()"><i class="fas fa-link"></i> Copiar enlace + código</button>
+          <button class="btn btn-s" onclick="debCopyCode()"><i class="fas fa-copy"></i> Copiar solo código</button>
+        </div>
+      </div>
+      <p class="hint" style="margin-top:10px"><i class="fas fa-globe"></i> Cada equipo abre el enlace (o entra a esta página, tarjeta <b>DEBATE → EQUIPO</b>, y escribe el código). El primero entra como <b>AZUL</b>, el segundo como <b>ROJO</b>.</p>
+    </div>
+    <div class="standings" id="debStandings"></div>
+    <p class="hint" id="debSalaInfo" style="text-align:center"></p>
+    <div class="controls-bar" style="justify-content:center" id="debRowIniciar">
+      <button class="btn btn-ok" id="debBtnIniciar" onclick="debIniciar()"><i class="fas fa-flag-checkered"></i> Iniciar debate</button>
+    </div>
+  </div>
+
+  <div id="debJuego" class="hidden">
+    <div class="hint" id="debMonTitle" style="text-align:center;letter-spacing:2px;font-family:var(--fd);color:var(--accent2);font-size:.8em;margin-bottom:8px"><i class="fas fa-chalkboard-user"></i> PANTALLA DE MONITOREO DEL DEBATE</div>
+    <div class="scoreboard">
+      <div class="team blue"><h3 id="debLblA">EQUIPO AZUL</h3><div class="sc" id="debScoreA">0</div><div class="dt" id="debDtA">✓ 0 · ✗ 0</div></div>
+      <div class="vs">VS</div>
+      <div class="team red"><h3 id="debLblR">EQUIPO ROJO</h3><div class="sc" id="debScoreR">0</div><div class="dt" id="debDtR">✓ 0 · ✗ 0</div></div>
+    </div>
+    <div class="rope-wrap"><canvas id="debRopeCanvas"></canvas><div class="rope-label" id="debRopeLabel">EQUILIBRIO</div></div>
+    <div class="deb-meta-bar">
+      <span class="badge b-warn" id="debProgBadge">PREGUNTA 1 / 5</span>
+      <span class="badge b-warn" id="debModBadge">MOD. A</span>
+    </div>
+    <div id="debHostCtrl" class="hidden" style="margin:10px 0">
+      <div class="controls-bar" style="justify-content:center">
+        <button class="btn btn-p" id="debBtnNext" onclick="debAvanzar()" disabled><i class="fas fa-forward"></i> SIGUIENTE</button>
+        <button class="btn btn-s" id="debBtnPeek" onclick="debTogglePeek()"><i class="fas fa-eye"></i> Ver respuestas</button>
+        <button class="btn btn-s" id="debBtnAuto" onclick="debToggleAuto()"><i class="fas fa-robot"></i> Auto: OFF</button>
+        <button class="btn btn-d" onclick="debTerminar()"><i class="fas fa-stop"></i> Terminar</button>
+      </div>
+    </div>
+    <div class="turn-ind t-gold" id="debTurnInd">PREPARADOS…</div>
+    <div class="timer-wrap">
+      <div class="timer-box" id="debBuzzTBox">
+        <div class="timer-label">Timbrar</div>
+        <svg class="timer-ring" viewBox="0 0 100 100">
+          <circle class="ring-bg" cx="50" cy="50" r="42" transform="rotate(-90 50 50)"/>
+          <circle class="ring-progress" id="debBuzzRing" cx="50" cy="50" r="42" transform="rotate(-90 50 50)"/>
+          <text class="timer-num" id="debBuzzNum" x="50" y="50" dy=".35em">10</text>
+        </svg>
+      </div>
+      <div class="timer-box" id="debAnsTBox">
+        <div class="timer-label" id="debAnsTLabel">Responder</div>
+        <svg class="timer-ring" viewBox="0 0 100 100">
+          <circle class="ring-bg" cx="50" cy="50" r="42" transform="rotate(-90 50 50)"/>
+          <circle class="ring-progress" id="debAnsRing" cx="50" cy="50" r="42" transform="rotate(-90 50 50)"/>
+          <text class="timer-num" id="debAnsNum" x="50" y="50" dy=".35em">20</text>
+        </svg>
+      </div>
+    </div>
+    <div id="debBuzzArea" class="hidden" style="margin:10px 0">
+      <button class="btn-buzz" id="debBtnBuzz" onclick="debBuzz()"><i class="fas fa-bell"></i> ¡TIMBRE!</button>
+      <p class="hint" style="text-align:center;margin-top:6px">El primer equipo en pulsar gana el derecho a responder esta pregunta.</p>
+    </div>
+    <div id="debDifArea" class="hidden">
+      <div class="diff-grid">
+        <button class="diff-btn dF" onclick="debElegir('FACIL')">FÁCIL<span class="pts">+1 / −1</span></button>
+        <button class="diff-btn dM" onclick="debElegir('MEDIO')">INTERMEDIA<span class="pts">+2 / −2</span></button>
+        <button class="diff-btn dD" onclick="debElegir('DIFICIL')">DIFÍCIL<span class="pts">+3 / −3</span></button>
+      </div>
+    </div>
+    <div id="debQArea" class="hidden">
+      <div class="q-box">
+        <div class="q-head" id="debQHead">PREGUNTA</div>
+        <div class="q-text" id="debQText"></div>
+        <div class="opts" id="debQOpts"></div>
+      </div>
+      <div class="feedback" id="debFb"></div>
+    </div>
+  </div>
+
+  <div id="debFin" class="hidden">
+    <div id="debFinBox"></div>
+    <div class="controls-bar" style="justify-content:center">
+      <button class="btn btn-s" onclick="window.print()"><i class="fas fa-print"></i> Imprimir acta</button>
+      <button class="btn btn-d" onclick="abandonar()"><i class="fas fa-door-open"></i> Salir</button>
+    </div>
+  </div>
+
+  <div id="debLogWrap" class="hidden">
+    <h3 class="deb-log-title"><i class="fas fa-scroll"></i> BITÁCORA DEL DEBATE (EN VIVO)</h3>
+    <div class="log-box" id="debLog"></div>
+  </div>
+</div>
+
+    <!-- COMÚN -->
+    <div class="turn-ind t-gold" id="turnIndicator">PREPARADOS...</div>
+    <div class="timer-wrap">
+      <div class="timer-box" id="diffTimerBox">
+        <div class="timer-label">Elegir riesgo</div>
+        <svg class="timer-ring" viewBox="0 0 100 100">
+          <circle class="ring-bg" cx="50" cy="50" r="42" transform="rotate(-90 50 50)"/>
+          <circle class="ring-progress" id="diffRingProgress" cx="50" cy="50" r="42" transform="rotate(-90 50 50)"/>
+          <text class="timer-num" id="diffTimerNum" x="50" y="50" dy=".35em">5</text>
+        </svg>
+      </div>
+      <div class="timer-box" id="questTimerBox">
+        <div class="timer-label">Responder</div>
+        <svg class="timer-ring" viewBox="0 0 100 100">
+          <circle class="ring-bg" cx="50" cy="50" r="42" transform="rotate(-90 50 50)"/>
+          <circle class="ring-progress" id="questRingProgress" cx="50" cy="50" r="42" transform="rotate(-90 50 50)"/>
+          <text class="timer-num" id="questTimerNum" x="50" y="50" dy=".35em">10</text>
+        </svg>
+      </div>
+    </div>
+    <div id="difficultyArea" class="hidden">
+      <div class="diff-grid">
+        <button class="diff-btn dF" id="btnDifF" onclick="elegirNivel('FACIL')">FÁCIL<span class="pts">+1 / −1</span><span class="ev" id="evF"></span></button>
+        <button class="diff-btn dM" id="btnDifM" onclick="elegirNivel('MEDIO')">INTERMEDIA<span class="pts">+2 / −2</span><span class="ev" id="evM"></span></button>
+        <button class="diff-btn dD" id="btnDifD" onclick="elegirNivel('DIFICIL')">DIFÍCIL<span class="pts">+3 / −3</span><span class="ev" id="evD"></span></button>
+      </div>
+      <p class="hint" style="text-align:center" id="recDiv"></p>
+    </div>
+    <div id="questionArea" class="hidden">
+      <div class="q-box">
+        <div class="q-head" id="qHeader">PREGUNTA</div>
+        <div class="q-text" id="qText"></div>
+        <div class="opts" id="qOptions"></div>
+      </div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </section>
+
+  <!-- ============ PODIO ============ -->
+  <section class="panel hidden" id="podiumPanel"><div id="podiumBox"></div></section>
+
+  <!-- ============ ANÁLISIS ============ -->
+  <section class="panel">
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="Estadisticas" onclick="switchTab('Estadisticas')"><i class="fas fa-chart-bar"></i> Estadísticas</button>
+      <button class="tab-btn" data-tab="MonteCarlo" onclick="switchTab('MonteCarlo')"><i class="fas fa-flask"></i> Simulación Monte Carlo</button>
+      <button class="tab-btn" data-tab="Bitacora" onclick="switchTab('Bitacora')"><i class="fas fa-scroll"></i> Bitácora</button>
+    </div>
+    <div class="tab-content active" id="tabEstadisticas">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="s-label">Modo actual</div><div class="s-value" id="stModo" style="font-size:.95em">—</div></div>
+        <div class="stat-card"><div class="s-label">Preguntas jugadas</div><div class="s-value" id="stJugadas">0</div></div>
+        <div class="stat-card"><div class="s-label">% Aciertos J1</div><div class="s-value" id="stPct1">—</div></div>
+        <div class="stat-card"><div class="s-label">% Aciertos J2</div><div class="s-value" id="stPct2">—</div></div>
+        <div class="stat-card"><div class="s-label">Riesgo prom. J1</div><div class="s-value" id="stRiesgo1" style="font-size:.95em">—</div></div>
+        <div class="stat-card"><div class="s-label">Riesgo prom. J2</div><div class="s-value" id="stRiesgo2" style="font-size:.95em">—</div></div>
+      </div>
+      <h2 style="font-size:.9em"><i class="fas fa-calculator"></i> Valor Esperado por Nivel de Riesgo</h2>
+      <table>
+        <thead><tr><th>Nivel</th><th>Recompensa</th><th>Penalización</th><th>P(acierto)</th><th>VE</th></tr></thead>
+        <tbody id="evTableBody"></tbody>
+      </table>
+    </div>
+    <div class="tab-content" id="tabMonteCarlo">
+      <p class="hint" style="margin-bottom:12px">Ejecuta partidas simuladas con estrategias predefinidas usando las probabilidades configuradas en Ajustes, para analizar resultados a largo plazo (convergencia estadística).</p>
+      <div class="sim-controls">
+        <div class="field">
+          <label>Estrategia Azul</label>
+          <select id="mcStratA">
+            <option value="conservative">Conservadora (siempre Fácil)</option>
+            <option value="moderate" selected>Moderada (siempre Intermedia)</option>
+            <option value="aggressive">Agresiva (siempre Difícil)</option>
+            <option value="adaptive">Adaptativa (según ventaja)</option>
+            <option value="random">Aleatoria</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Estrategia Roja</label>
+          <select id="mcStratB">
+            <option value="conservative">Conservadora (siempre Fácil)</option>
+            <option value="moderate">Moderada (siempre Intermedia)</option>
+            <option value="aggressive" selected>Agresiva (siempre Difícil)</option>
+            <option value="adaptive">Adaptativa (según ventaja)</option>
+            <option value="random">Aleatoria</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>N.° Simulaciones</label>
+          <select id="mcN">
+            <option value="100">100</option>
+            <option value="500">500</option>
+            <option value="1000" selected>1 000</option>
+            <option value="5000">5 000</option>
+            <option value="10000">10 000</option>
+          </select>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <button class="btn btn-p" id="mcRun" onclick="runMonteCarlo()"><i class="fas fa-play"></i> Ejecutar Simulación</button>
+      </div>
+      <div class="progress-bar" id="mcProgBar" style="margin-top:12px;display:none"><div class="progress-fill" id="mcProgFill"></div></div>
+      <div style="text-align:center;font-size:.8em;color:var(--muted);margin-top:4px" id="mcProgText"></div>
+      <div id="mcResults" style="display:none">
+        <div class="sim-results">
+          <div class="sim-stat"><div class="sim-label">Victorias Azul</div><div class="sim-val blue-v" id="mcBlue">0</div></div>
+          <div class="sim-stat"><div class="sim-label">Empates / Límite</div><div class="sim-val draw-v" id="mcDraw">0</div></div>
+          <div class="sim-stat"><div class="sim-label">Victorias Rojo</div><div class="sim-val red-v" id="mcRed">0</div></div>
+        </div>
+        <div class="sim-bar">
+          <div class="bar-blue" id="mcBarB" style="width:50%">50%</div>
+          <div class="bar-draw" id="mcBarD" style="width:0%"></div>
+          <div class="bar-red" id="mcBarR" style="width:50%">50%</div>
+        </div>
+        <div class="stats-grid" style="margin-top:12px">
+          <div class="stat-card"><div class="s-label">Rondas promedio</div><div class="s-value" id="mcAvgR">—</div></div>
+          <div class="stat-card"><div class="s-label">Score prom. Azul</div><div class="s-value" id="mcAvgA" style="color:var(--blue)">—</div></div>
+          <div class="stat-card"><div class="s-label">Score prom. Rojo</div><div class="s-value" id="mcAvgB" style="color:var(--red)">—</div></div>
+          <div class="stat-card"><div class="s-label">Tasa victoria Azul</div><div class="s-value" id="mcRateA" style="color:var(--blue)">—</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="tabBitacora">
+      <div class="log-box" id="logBox"><div style="color:var(--muted);text-align:center;padding:16px">Las decisiones de las partidas locales aparecerán aquí...</div></div>
+    </div>
+  </section>
+
+  <!-- ============ RANKING ============ -->
+  <section class="panel">
+    <h2><i class="fas fa-ranking-star"></i> RANKING GLOBAL (Google Sheets)</h2>
+    <button class="btn btn-s" onclick="cargarRanking()"><i class="fas fa-arrows-rotate"></i> Actualizar ranking</button>
+    <div id="rankingBody" style="margin-top:12px"><p class="hint">Presiona "Actualizar" para consultar el historial de RESULTADOS.</p></div>
+  </section>
+</div>
+
+<script>
+/* ============================================================
+   TIRA LA CUERDA MATEMÁTICA v3.4 — FRONTEND
+   ▸ Conexión automática a Google Sheets al abrir la página
+   ▸ NÚMEROS RACIONALES precargado por defecto (banco interno)
+   ▸ Modos: Solo · vs CPU · Duelo 2 Equipos · Online
+   ============================================================ */
+
+/* 👉👉 PEGA AQUÍ TU URL DE APPS SCRIPT (termina en /exec) 👈👈
+   Con esto, CUALQUIER dispositivo que abra esta página se conecta
+   automáticamente a Google Sheets sin configurar nada. */
+const API_DEFAULT = '';   // ← Ej: 'https://script.google.com/macros/s/AKfycbw2y-Yjdi00rn-FaQn4.../exec'
+
+const $ = id => document.getElementById(id);
+const PUNTOS = { FACIL:1, MEDIO:2, DIFICIL:3 };
+const NIVEL_LBL = { FACIL:'FÁCIL', MEDIO:'INTERMEDIA', DIFICIL:'DIFÍCIL' };
+const CIRC = 2*Math.PI*42;
+const MATERIA_DEFECTO = 'NÚMEROS RACIONALES';
+
+/* ---------- CONFIG PERSISTENTE ---------- */
+const LS = { get(k,d){try{const v=localStorage.getItem('tcm_'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+             set(k,v){try{localStorage.setItem('tcm_'+k,JSON.stringify(v))}catch(e){}} };
+let CFG = Object.assign({ api:'', meta:10, tDiff:5, tQuest:10, nombre:'JUGADOR 1', nSolo:10,
+  logo:'', colegio:'', color:'#f59e0b', pF:.85, pM:.65, pD:.45 }, LS.get('cfg',{}));
+const saveCfg = () => LS.set('cfg', CFG);
+
+let APP = { modoSel:null, fuente:'—', materias:[], preguntas:[], pools:null, pos:null,
+            pendingRoom:null, selMateria:'', selTema:'' };
+let GAME = null, POLL = null, TIMERS = {}, ropeRaf = null;
+let NET = { apiOK:false };
+
+/* ---------- UTILIDADES ---------- */
+function esc(s){ return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; }
+function toast(msg,tipo){ document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t=document.createElement('div'); t.className='toast';
+  t.style.background = tipo==='bad' ? 'var(--bad)' : (tipo==='warn' ? 'var(--accent)' : 'var(--bg2)');
+  t.style.color = tipo ? '#000' : 'var(--text)';
+  if(tipo==='bad') t.style.color='#fff';
+  t.textContent = msg; document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),400)},3200); }
+function flash(tipo){ const f=$('flash'); f.className='screen-flash';
+  void f.offsetWidth; f.classList.add('on-'+tipo); setTimeout(()=>f.className='screen-flash',600); }
+function togglePanel(id){ $(id).classList.toggle('hidden'); }
+function norm(s){ return String(s||'').trim().toUpperCase(); }
+
+/* ---------- API ---------- */
+async function apiGet(params){
+  if(!CFG.api) throw new Error('API no configurada');
+  const qs = new URLSearchParams(params); qs.set('_', Date.now());
+  const res = await fetch(CFG.api+'?'+qs.toString(), {method:'GET', redirect:'follow'});
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  return res.json();
+}
+
+/* Probar conexión (manual desde Ajustes) — valida, guarda y recarga contenido */
+async function probarConexion(){
+  const urlIngresada = $('inApi').value.trim();
+  if(!urlIngresada){ $('apiStatus').innerHTML = '<span class="badge b-bad">🔴 Escribe primero la URL de la API</span>'; return; }
+  if(!urlIngresada.startsWith('https://script.google.com/') || !urlIngresada.includes('/exec')){
+    $('apiStatus').innerHTML = '<span class="badge b-warn">⚠ La URL debe terminar en /exec</span>'; return; }
+  CFG.api = urlIngresada; saveCfg();
+  $('apiStatus').innerHTML = '<span class="badge b-warn">⏳ Probando...</span>';
+  try{
+    const r = await apiGet({action:'ping'});
+    $('apiStatus').innerHTML = '<span class="badge b-ok">🟢 '+esc(r.msg||'Conectado')+'</span>';
+    NET.apiOK = true; updateConnBadge();
+    toast('✔ Conectado a Google Sheets');
+    const temaPrevio = APP.selTema;
+    await cargarMaterias(true);
+    await asegurarSeleccion(temaPrevio);
+  }catch(e){
+    $('apiStatus').innerHTML = '<span class="badge b-bad">🔴 Sin conexión: '+esc(e.message)+'</span>';
+    NET.apiOK = false; updateConnBadge();
+  }
+}
+
+/* ---------- MONITOR DE CONEXIÓN ---------- */
+function updateConnBadge(){
+  const b=$('connBadge');
+  if(!navigator.onLine){ NET.apiOK=false; b.className='badge b-bad'; b.innerHTML='<i class="fas fa-wifi"></i> Sin internet'; return; }
+  if(!CFG.api){ b.className='badge b-warn'; b.innerHTML='<i class="fas fa-gear"></i> Modo local (DEMO)'; return; }
+  if(NET.apiOK){ b.className='badge b-ok'; b.innerHTML='<i class="fas fa-globe"></i> En línea'; }
+  else { b.className='badge b-warn'; b.innerHTML='<i class="fas fa-triangle-exclamation"></i> Verificando...'; }
+}
+async function monitorConn(){
+  if(!CFG.api || !navigator.onLine){ updateConnBadge(); return; }
+  try{ await apiGet({action:'ping'}); NET.apiOK=true; }catch(e){ NET.apiOK=false; }
+  updateConnBadge();
+}
+
+/* ---------- BANCO DEMO (siempre disponible como respaldo) ---------- */
+const DEMO = {
+ materias:['NÚMEROS RACIONALES','ARITMÉTICA','ÁLGEBRA','TRIGONOMETRÍA'],
+ temas:{
+  'NÚMEROS RACIONALES':['Fracciones Homogéneas y Heterogéneas'],
+  'ARITMÉTICA':['Operaciones Básicas','Fracciones'],
+  'ÁLGEBRA':['Ecuaciones Lineales'],
+  'TRIGONOMETRÍA':['Triángulos Rectángulos']
+ },
+ preguntas:[
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'Las fracciones 2/9 y 5/9 son...',opciones:['Homogéneas','Heterogéneas','Equivalentes','Impropias'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'Las fracciones homogéneas tienen igual...',opciones:['Numerador','Denominador','Valor','Signo'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'¿Cuánto es 2/5 + 1/5?',opciones:['3/10','3/5','2/10','1/5'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'¿Cuánto es 7/9 - 4/9?',opciones:['3/9','3/18','11/9','11/18'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'Las fracciones 3/4 y 5/7 son...',opciones:['Heterogéneas','Homogéneas','Equivalentes','Iguales'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'¿Cuánto es 3/8 + 4/8?',opciones:['7/16','7/8','1/2','12/8'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'Un número racional se escribe a/b con...',opciones:['b distinto de 0','b igual a 0','a negativo','b negativo'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'¿Cuánto es 5/6 - 2/6?',opciones:['3/6','3/12','7/6','4/6'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'Las fracciones con distinto denominador se llaman...',opciones:['Heterogéneas','Homogéneas','Mixtas','Equivalentes'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'¿Cuánto es 1/7 + 2/7 + 3/7?',opciones:['6/21','6/7','6/14','1/7'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'¿Qué valor NO puede ser denominador?',opciones:['0','1','7','-5'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'¿Cuánto es 4/11 - 1/11?',opciones:['3/11','5/11','3/22','4/121'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'¿Cuál fracción es homogénea con 3/8?',opciones:['5/8','3/7','8/3','1/2'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'¿Cuánto es 2/13 + 5/13?',opciones:['7/26','7/13','10/13','1/13'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'FACIL',pregunta:'El número -3/4 es un número...',opciones:['Racional negativo','Irracional','Natural','Primo'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'¿Cuánto es 1/2 + 1/4?',opciones:['2/6','3/4','1/6','2/4'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'¿Cuánto es 1/3 + 1/6?',opciones:['2/9','1/9','1/2','2/6'],correcta:'C'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'¿Cuál es mayor: 2/3 o 3/5?',opciones:['2/3','3/5','Son iguales','Falta un dato'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'¿Cuánto es 3/4 - 1/2?',opciones:['1/4','1/2','2/6','1/8'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'¿Cuál es el mcm de 4 y 6?',opciones:['24','12','10','2'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'¿Cuánto es 1/4 + 1/6?',opciones:['2/10','1/10','5/12','1/12'],correcta:'C'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'El decimal 0.5 equivale a...',opciones:['1/5','1/2','5/100','2/5'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'¿Cuánto es 2/5 + 1/10?',opciones:['3/15','5/20','1/2','3/10'],correcta:'C'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'¿Cuál fracción es equivalente a 3/4?',opciones:['6/8','4/3','6/12','9/16'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'¿Cuánto es 5/6 - 1/3?',opciones:['1/2','2/3','1/3','4/9'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'¿Cuál es el MENOR: 1/2, 3/4, 2/3?',opciones:['1/2','3/4','2/3','Todos son iguales'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'¿Cuánto es 1/5 + 3/10?',opciones:['4/15','1/2','2/5','3/10'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'El decimal 0.75 equivale a...',opciones:['3/4','7/5','3/5','75/10'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'Para sumar heterogéneas primero se busca...',opciones:['El mínimo común múltiplo','El máximo común divisor','El mayor denominador','Restar numeradores'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'MEDIO',pregunta:'¿Cuánto es 2/3 - 1/6?',opciones:['1/3','1/2','1/6','3/9'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'¿Cuánto es 1/2 + 1/3 + 1/6?',opciones:['1','5/6','11/12','3/11'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'¿Cuánto es 5/12 + 7/18?',opciones:['35/36','29/36','12/24','13/30'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'¿Cuánto es 7/8 - 5/6?',opciones:['2/2','1/24','1/48','2/14'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'Ana come 2/5 de pizza y Luis 1/4. ¿Cuánto comieron en total?',opciones:['3/9','3/20','7/20','13/20'],correcta:'D'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'¿Cuánto es 3/4 - 1/6 + 1/12?',opciones:['2/3','3/4','1/2','5/12'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'¿Cuál es mayor: 5/7 o 7/10?',opciones:['7/10','Son iguales','5/7','Falta un dato'],correcta:'C'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'¿Cuánto es 11/15 - 2/5 + 1/3?',opciones:['1/3','2/3','4/5','8/15'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'Un tanque tiene 3/8 de agua y se agregan 1/4. ¿Fracción del tanque llena?',opciones:['4/12','3/12','7/8','5/8'],correcta:'D'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'¿Cuánto es 2/9 + 3/4 - 5/18?',opciones:['25/36','10/31','5/18','1/2'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'De 1 m de cinta se usan 1/3 y 1/4. ¿Cuánto queda?',opciones:['7/12','1/2','5/12','2/7'],correcta:'C'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'¿Cuánto es 9/10 - (1/5 + 1/4)?',opciones:['7/20','9/20','1/2','19/20'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'¿Cuánto es 4/15 + 7/20?',opciones:['11/35','11/60','3/4','37/60'],correcta:'D'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'¿Cuál es el promedio entre 1/2 y 1/3?',opciones:['5/12','2/5','1/6','5/6'],correcta:'A'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'¿Cuánto es 13/24 - 3/8?',opciones:['5/12','1/6','10/32','1/8'],correcta:'B'},
+  {materia:'NÚMEROS RACIONALES',tema:'Fracciones Homogéneas y Heterogéneas',nivel:'DIFICIL',pregunta:'Pedro gastó 1/2 de su dinero y luego 1/4. ¿Qué fracción le queda?',opciones:['3/4','1/2','1/4','2/6'],correcta:'C'},
+  {materia:'ARITMÉTICA',tema:'Operaciones Básicas',nivel:'FACIL',pregunta:'¿Cuánto es 7 + 8?',opciones:['13','14','15','16'],correcta:'C'},
+  {materia:'ARITMÉTICA',tema:'Operaciones Básicas',nivel:'FACIL',pregunta:'¿Cuánto es 12 × 3?',opciones:['32','36','34','30'],correcta:'B'},
+  {materia:'ARITMÉTICA',tema:'Operaciones Básicas',nivel:'MEDIO',pregunta:'¿Cuánto es 100 - 37?',opciones:['53','63','73','43'],correcta:'B'},
+  {materia:'ARITMÉTICA',tema:'Operaciones Básicas',nivel:'MEDIO',pregunta:'¿Cuánto es 144 ÷ 12?',opciones:['10','11','12','13'],correcta:'C'},
+  {materia:'ARITMÉTICA',tema:'Operaciones Básicas',nivel:'DIFICIL',pregunta:'¿Cuánto es 15 × 15?',opciones:['205','215','225','235'],correcta:'C'},
+  {materia:'ARITMÉTICA',tema:'Fracciones',nivel:'FACIL',pregunta:'¿Cuál es la mitad de 50?',opciones:['20','25','30','35'],correcta:'B'},
+  {materia:'ARITMÉTICA',tema:'Fracciones',nivel:'FACIL',pregunta:'¿Cuánto es 1/4 de 20?',opciones:['4','5','6','10'],correcta:'B'},
+  {materia:'ARITMÉTICA',tema:'Fracciones',nivel:'MEDIO',pregunta:'¿Cuánto es 2/3 + 1/6?',opciones:['3/9','5/6','1/2','3/6'],correcta:'B'},
+  {materia:'ARITMÉTICA',tema:'Fracciones',nivel:'DIFICIL',pregunta:'¿Cuánto es 3/5 de 45?',opciones:['21','24','27','30'],correcta:'C'},
+  {materia:'ÁLGEBRA',tema:'Ecuaciones Lineales',nivel:'FACIL',pregunta:'Si x + 7 = 15, ¿cuánto vale x?',opciones:['6','7','8','9'],correcta:'C'},
+  {materia:'ÁLGEBRA',tema:'Ecuaciones Lineales',nivel:'MEDIO',pregunta:'Si 3x = 21, ¿cuánto vale x?',opciones:['5','6','7','8'],correcta:'C'},
+  {materia:'ÁLGEBRA',tema:'Ecuaciones Lineales',nivel:'MEDIO',pregunta:'Perímetro de un rectángulo de 6 × 4:',opciones:['10','20','24','28'],correcta:'B'},
+  {materia:'ÁLGEBRA',tema:'Ecuaciones Lineales',nivel:'DIFICIL',pregunta:'Raíces de x² - 5x + 6 = 0:',opciones:['1 y 6','2 y 3','-2 y -3','-1 y -6'],correcta:'B'},
+  {materia:'ÁLGEBRA',tema:'Ecuaciones Lineales',nivel:'DIFICIL',pregunta:'Si 2^x = 64, ¿cuánto vale x?',opciones:['4','5','6','7'],correcta:'C'},
+  {materia:'TRIGONOMETRÍA',tema:'Triángulos Rectángulos',nivel:'FACIL',pregunta:'¿Cuánto es sen(90°)?',opciones:['0','1/2','1','√2'],correcta:'C'},
+  {materia:'TRIGONOMETRÍA',tema:'Triángulos Rectángulos',nivel:'MEDIO',pregunta:'cateto opuesto / hipotenusa = ?',opciones:['sen θ','cos θ','tan θ','cot θ'],correcta:'A'},
+  {materia:'TRIGONOMETRÍA',tema:'Triángulos Rectángulos',nivel:'MEDIO',pregunta:'¿Cuánto es cos(0°)?',opciones:['0','1','-1','√2/2'],correcta:'B'},
+  {materia:'TRIGONOMETRÍA',tema:'Triángulos Rectángulos',nivel:'DIFICIL',pregunta:'¿Cuánto es tan(45°)?',opciones:['0','1/2','1','√3'],correcta:'C'},
+  {materia:'TRIGONOMETRÍA',tema:'Triángulos Rectángulos',nivel:'DIFICIL',pregunta:'Catetos 3 y 4 → ¿hipotenusa?',opciones:['5','6','7','√7'],correcta:'A'},
+  {materia:'TRIGONOMETRÍA',tema:'Triángulos Rectángulos',nivel:'DIFICIL',pregunta:'sen(30°) + cos(60°) = ?',opciones:['0','0.5','1','1.5'],correcta:'C'}
+ ]};
+const demoMaterias = () => ({ok:true, materias:DEMO.materias});
+const demoTemas = m => ({ok:true, temas:DEMO.temas[m]||[]});
+const demoPreguntas = (m,t) => ({ok:true, preguntas:DEMO.preguntas.filter(p=>p.materia===m&&p.tema===t)});
+
+/* ---------- CARGA DE CONTENIDO (v3.4: DEMO primero + Sheets automático) ---------- */
+function pintarMaterias(lista, fuente){
+  APP.fuente = fuente;
+  APP.materias = lista || [];
+  const sel = $('inMateria');
+  sel.innerHTML = '<option value="">— Selecciona —</option>' + APP.materias.map(m=>`<option>${esc(m)}</option>`).join('');
+  // Restaurar la selección previa si aún existe (ej. tras conectar a Sheets)
+  if(APP.selMateria && APP.materias.some(m=>m===APP.selMateria)) sel.value = APP.selMateria;
+  $('inTema').innerHTML = '<option value="">— Selecciona materia —</option>';
+  refrescarFuente();
+}
+async function cargarMaterias(forzar){
+  // 1) Contenido instantáneo del banco interno (nunca queda en blanco)
+  pintarMaterias(demoMaterias().materias, 'DEMO');
+  // 2) Intentar Google Sheets (conexión automática)
+  if(CFG.api){
+    try{
+      const data = await apiGet({action:'getMaterias'});
+      const lista = (data.materias && data.materias.length) ? data.materias : demoMaterias().materias;
+      pintarMaterias(lista, (data.materias && data.materias.length) ? 'Google Sheets' : 'DEMO');
+      NET.apiOK = true;
+    }catch(e){
+      NET.apiOK = false;
+      if(forzar) toast('Sin conexión con Sheets: usando banco interno','warn');
+    }
+  }
+  updateConnBadge();
+}
+/* Selección automática: NÚMEROS RACIONALES + primer tema + preguntas cargadas */
+async function asegurarSeleccion(temaPreferido){
+  const sel = $('inMateria');
+  if(!sel.value){
+    let idx = [...sel.options].findIndex(o=>o.value===MATERIA_DEFECTO);
+    if(idx < 1) idx = sel.options.length>1 ? 1 : -1;
+    if(idx > 0) sel.selectedIndex = idx;
+  }
+  if(!sel.value) return;
+  await cargarTemas();
+  const selT = $('inTema');
+  if(selT.options.length > 1){
+    const pref = temaPreferido || APP.selTema || '';
+    const ti = [...selT.options].findIndex(o=>o.value===pref);
+    selT.selectedIndex = ti > 0 ? ti : 1;
+    await cargarPreguntas();
+    APP.selMateria = sel.value; APP.selTema = selT.value;
+  }
+}
+async function recargarTodo(){
+  const temaPrevio = APP.selTema;
+  await cargarMaterias(true);
+  await asegurarSeleccion(temaPrevio);
+  toast('✔ Contenido recargado ('+APP.fuente+')');
+}
+async function cargarTemas(){
+  const m = $('inMateria').value;
+  const sel = $('inTema');
+  if(!m){ sel.innerHTML='<option value="">— Selecciona materia —</option>'; return; }
+  let data;
+  if(APP.fuente==='Google Sheets' && CFG.api){
+    try{ data = await apiGet({action:'getTemas', materia:m});
+         if(!data.temas || !data.temas.length) data = demoTemas(m); }
+    catch(e){ data = demoTemas(m); }
+  } else data = demoTemas(m);
+  sel.innerHTML = '<option value="">— Selecciona —</option>' + (data.temas||[]).map(t=>`<option>${esc(t)}</option>`).join('');
+}
+async function cargarPreguntas(){
+  const m = $('inMateria').value, t = $('inTema').value;
+  if(!m || !t){ toast('Selecciona materia y tema primero','warn'); return; }
+  let data;
+  try{
+    if(APP.fuente==='Google Sheets' && CFG.api){
+      data = await apiGet({action:'getPreguntas', materia:m, tema:t});
+      if(!data.ok || !data.preguntas || !data.preguntas.length) data = demoPreguntas(m,t);
+    } else data = demoPreguntas(m,t);
+  }catch(e){ data = demoPreguntas(m,t); }
+  APP.preguntas = (data.preguntas||[]).map(p=>({
+    id:p.id||'', nivel:String(p.nivel||'').toUpperCase(), q:p.pregunta,
+    opciones:p.opciones, correcta:String(p.correcta||'').toUpperCase(), exp:p.explicacion||''
+  })).filter(p=>['FACIL','MEDIO','DIFICIL'].includes(p.nivel) && p.q && 'ABCD'.includes(p.correcta));
+  APP.pools = { FACIL:[], MEDIO:[], DIFICIL:[] }; APP.pos = { FACIL:0, MEDIO:0, DIFICIL:0 };
+  APP.preguntas.forEach(p=>APP.pools[p.nivel].push(p));
+  Object.keys(APP.pools).forEach(k=>shuffle(APP.pools[k]));
+  $('cntF').textContent=APP.pools.FACIL.length; $('cntM').textContent=APP.pools.MEDIO.length; $('cntD').textContent=APP.pools.DIFICIL.length;
+  const total = APP.preguntas.length;
+  if(total===0){ toast('No hay preguntas para esa selección','bad'); }
+  else toast(`✔ ${total} preguntas listas (F:${APP.pools.FACIL.length} · I:${APP.pools.MEDIO.length} · D:${APP.pools.DIFICIL.length})`);
+  actualizarBtnsDiff();
+}
+function nextQ(nivel){
+  let pool = APP.pools[nivel];
+  if(!pool || !pool.length){
+    for(const k of ['FACIL','MEDIO','DIFICIL']) if(APP.pools[k].length){ nivel=k; pool=APP.pools[k]; break; }
+  }
+  if(!pool || !pool.length) return null;
+  if(APP.pos[nivel] >= pool.length){ shuffle(pool); APP.pos[nivel]=0; }
+  return pool[APP.pos[nivel]++];
+}
+function actualizarBtnsDiff(){
+  ['FACIL','MEDIO','DIFICIL'].forEach((k,i)=>{
+    const btn = $('btnDif'+['F','M','D'][i]);
+    const n = APP.pools ? APP.pools[k].length : 0;
+    btn.disabled = !n;
+    btn.querySelector('.pts').textContent = `+${PUNTOS[k]} / −${PUNTOS[k]} · ${n} disp.`;
+    const p = {FACIL:CFG.pF, MEDIO:CFG.pM, DIFICIL:CFG.pD}[k];
+    const ev = p*PUNTOS[k] - (1-p)*PUNTOS[k];
+    btn.querySelector('.ev').textContent = `VE: ${ev>=0?'+':''}${ev.toFixed(2)}`;
+  });
+}
+function refrescarFuente(){
+  const b=$('fuenteBadge');
+  if(APP.fuente==='Google Sheets'){ b.className='badge b-ok'; b.textContent='🟢 Google Sheets'; }
+  else { b.className='badge b-warn'; b.textContent='🟡 Banco interno (DEMO)'; }
+  $('cardOnline').classList.toggle('disabled', APP.fuente!=='Google Sheets');
+  $('hdrEstado').textContent = 'Fuente: ' + APP.fuente;
+}
+
+/* ---------- AJUSTES / BRANDING ---------- */
+function applyBranding(){
+  if(CFG.logo){ $('logoImg').src=CFG.logo; $('logoImg').classList.remove('hidden'); }
+  else $('logoImg').classList.add('hidden');
+  $('schoolName').textContent = CFG.colegio || 'DUELO MATEMÁTICO';
+  document.documentElement.style.setProperty('--accent', CFG.color);
+  document.documentElement.style.setProperty('--accent2', CFG.color);
+}
+function cargarAjustesEnForm(){
+  $('inApi').value=CFG.api; $('inColegio').value=CFG.colegio; $('inColor').value=CFG.color;
+  $('inMeta').value=CFG.meta; $('inTDiff').value=CFG.tDiff; $('inTQuest').value=CFG.tQuest;
+  $('inNombre').value=CFG.nombre; $('inNSolo').value=CFG.nSolo;
+  $('inPF').value=CFG.pF; $('inPM').value=CFG.pM; $('inPD').value=CFG.pD;
+}
+function guardarAjustes(){
+  CFG.api=$('inApi').value.trim(); CFG.colegio=$('inColegio').value.trim(); CFG.color=$('inColor').value;
+  CFG.meta=parseInt($('inMeta').value)||10; CFG.tDiff=parseInt($('inTDiff').value)||5; CFG.tQuest=parseInt($('inTQuest').value)||10;
+  CFG.nombre=($('inNombre').value.trim()||'JUGADOR 1').toUpperCase(); CFG.nSolo=parseInt($('inNSolo').value)||10;
+  CFG.pF=parseFloat($('inPF').value)||.85; CFG.pM=parseFloat($('inPM').value)||.65; CFG.pD=parseFloat($('inPD').value)||.45;
+  saveCfg(); applyBranding(); actualizarBtnsDiff(); updateEVTable(); updateConnBadge(); monitorConn(); toast('✔ Ajustes guardados');
+}
+ $('logoFile').addEventListener('change', e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = () => { const img = new Image();
+    img.onload = () => { const c=document.createElement('canvas');
+      const s=Math.min(1, 200/Math.max(img.width,img.height));
+      c.width=img.width*s; c.height=img.height*s;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      CFG.logo=c.toDataURL('image/png'); saveCfg(); applyBranding(); toast('✔ Logo actualizado'); };
+    img.src = r.result; };
+  r.readAsDataURL(f);
+});
+
+/* ---------- MODAL ---------- */
+function entrarDesdeModal(){
+  const n=$('wNombre').value.trim().toUpperCase(); if(n) CFG.nombre=n;
+  const a=$('wApi').value.trim(); if(a){ CFG.api=a; NET.apiOK=false; monitorConn(); }
+  saveCfg(); cargarAjustesEnForm();
+  $('modalWelcome').classList.add('hidden');
+  if(APP.pendingRoom){
+    selectModo('online'); $('inCodigoRoom').value=APP.pendingRoom;
+    toast('🎮 Sala detectada: '+APP.pendingRoom+' → presiona UNIRSE','warn');
+    setTimeout(()=>$('inCodigoRoom').scrollIntoView({behavior:'smooth',block:'center'}),400);
+  }
+}
+
+/* ---------- SELECCIÓN DE MODO ---------- */
+function selectModo(m){
+  if(m==='online' && APP.fuente!=='Google Sheets' && !CFG.api){ toast('El modo online requiere conexión: pega tu URL en API_DEFAULT del código','warn'); return; }
+  APP.modoSel = m;
+  ['solo','cpu','duelo','online'].forEach(k=>$('card'+k.charAt(0).toUpperCase()+k.slice(1)).classList.toggle('active', k===m));
+  $('onlineCfg').classList.toggle('hidden', m!=='online');
+  $('duelCfg').classList.toggle('hidden', m!=='duelo');
+  const btns={solo:'<i class="fas fa-play"></i> Comenzar práctica',
+              cpu:'<i class="fas fa-play"></i> Comenzar duelo vs CPU',
+              duelo:'<i class="fas fa-play"></i> Comenzar duelo de equipos',
+              online:'<i class="fas fa-tower-broadcast"></i> Crear sala (anfitrión)'};
+  $('btnComenzar').innerHTML = btns[m];
+  $('modeHint').textContent = m==='solo' ? 'Se usarán '+CFG.nSolo+' preguntas.' :
+    m==='cpu' ? 'Gana la ventaja de '+CFG.meta+' puntos.' :
+    m==='duelo' ? 'Dos equipos se turnan en este dispositivo. Meta: '+CFG.meta+' puntos de ventaja.' :
+    'Otros dispositivos se conectan con enlace, QR o código de sala.';
+}
+function btnComenzarClick(){
+  if(!APP.modoSel){ toast('Elige un modo de juego','warn'); return; }
+  if(APP.modoSel!=='online' && (!APP.pools || !APP.preguntas.length)){ toast('Primero carga las preguntas del tema','warn'); return; }
+  if(APP.modoSel==='solo') startSolo();
+  else if(APP.modoSel==='cpu') startRope('cpu');
+  else if(APP.modoSel==='duelo') startRope('duelo');
+  else crearSala();
+}
+
+/* ---------- TEMPORIZADORES (v3.4: arco correcto + número horizontal) ---------- */
+function startRing(key,total,onEnd){
+  stopRing(key); let left=total;
+  const ring=$(key+'RingProgress'), num=$(key+'TimerNum'), boxEl=$(key+'TimerBox');
+  if(!ring || !num || !boxEl) return;
+  ring.setAttribute('stroke-dasharray', CIRC);
+  ring.setAttribute('stroke-dashoffset', 0);
+  boxEl.style.display='block';
+  const upd=()=>{ const pct=Math.max(0,left/total);
+    ring.style.strokeDashoffset=CIRC*(1-pct);
+    ring.style.stroke = pct<=.2?'var(--bad)':pct<=.5?'var(--accent)':'var(--ok)';
+    num.textContent=left; };
+  upd();
+  TIMERS[key]=setInterval(()=>{ left--; if(left<=0){ stopRing(key); onEnd(); } else upd(); },1000);
+}
+function stopRing(key){ if(TIMERS[key]){ clearInterval(TIMERS[key]); delete TIMERS[key]; } const b=$(key+'TimerBox'); if(b) b.style.display='none'; }
+function stopAllRings(){ stopRing('diff'); stopRing('quest'); }
+
+/* ---------- RENDER DE PREGUNTA ---------- */
+function renderQuestion(q, clickable, onPick, headerExtra){
+  $('qHeader').textContent = `${NIVEL_LBL[q.nivel]} · ±${PUNTOS[q.nivel]} pts${headerExtra?' · '+headerExtra:''}`;
+  $('qText').textContent = q.q;
+  const orden = shuffle([0,1,2,3]);
+  const cont = $('qOptions'); cont.innerHTML='';
+  orden.forEach((orig,i)=>{
+    const b=document.createElement('button'); b.className='opt';
+    b.innerHTML=`<b>${'ABCD'[i]})</b> ${esc(q.opciones[orig])}`;
+    b.onclick=()=>{ if(!clickable||cont.dataset.locked==='1')return; cont.dataset.locked='1'; onPick(i,orig); };
+    cont.appendChild(b);
+  });
+  cont.dataset.locked = clickable?'0':'1';
+  $('questionArea').classList.remove('hidden');
+  return orden;
+}
+function marcarRespuesta(orden, q, elegidaOrig){
+  const btns=[...$('qOptions').children];
+  const idxCorrecta = orden.indexOf('ABCD'.indexOf(q.correcta));
+  btns.forEach((b,i)=>{ b.disabled=true;
+    if(i===idxCorrecta) b.classList.add('ok');
+    else if(orden[i]===elegidaOrig) b.classList.add('no'); });
+}
+function setFeedback(txt, cls){ const f=$('feedback'); f.textContent=txt; f.className='feedback '+(cls||''); }
+
+/* ---------- BITÁCORA ---------- */
+function addLog(quien, nivel, correcto, pts, timeout){
+  const log=$('logBox');
+  if(!log.dataset.init){ log.innerHTML=''; log.dataset.init='1'; }
+  const e=document.createElement('div'); e.className='log-entry';
+  const col=correcto?'#6ee7b7':'#fca5a5';
+  e.innerHTML=`<span class="le-r">${GAME?('R'+(GAME.ronda||GAME.n||1)):'—'}</span>
+    <span class="le-t">${esc(quien)}</span><span class="le-d ${nivel}">${NIVEL_LBL[nivel]}</span>
+    <span style="color:${col};font-weight:700">${correcto?'+':'−'}${pts}</span>
+    <span style="color:${col};font-size:.82em">${timeout?'Sin responder (tiempo)':(correcto?'Acertó':'Falló')}</span>`;
+  log.insertBefore(e,log.firstChild);
+}
+
+/* ---------- MODO SOLO ---------- */
+function startSolo(){
+  GAME={mode:'solo', score:0, hits:0, miss:0, n:0, racha:0, mejor:0, niveles:[], ronda:1, turno:'blue'};
+  mostrarJuego('PRÁCTICA INDIVIDUAL · '+$('inMateria').value+' → '+$('inTema').value);
+  $('soloArea').classList.remove('hidden'); updSolo();
+  $('turnIndicator').textContent='ELIGE TU NIVEL DE RIESGO'; $('turnIndicator').className='turn-ind t-gold';
+  faseDificultad();
+}
+function updSolo(){ $('soloScore').textContent=GAME.score; $('soloProg').textContent=GAME.n+'/'+CFG.nSolo;
+  $('soloRacha').textContent=GAME.racha; $('soloMejor').textContent=GAME.mejor; updateStatsPanel(); }
+function faseDificultad(){
+  $('questionArea').classList.add('hidden'); $('difficultyArea').classList.remove('hidden');
+  setFeedback('',''); actualizarBtnsDiff();
+  $('recDiv').textContent = 'Valor Esperado (VE) = P·premio − (1−P)·castigo. Decide en '+CFG.tDiff+'s o el sistema elegirá por ti.';
+  startRing('diff', CFG.tDiff, ()=>{
+    const disp=['FACIL','MEDIO','DIFICIL'].filter(k=>APP.pools[k].length);
+    const lvl=disp[Math.floor(Math.random()*disp.length)];
+    toast('⏱ Tiempo agotado. Nivel asignado: '+NIVEL_LBL[lvl],'warn');
+    elegirNivel(lvl, GAME.turno);
+  });
+}
+function responderSolo(i,orig,timeout){
+  stopRing('quest');
+  const {nivel,q}=GAME.current;
+  const correcto = !timeout && orig===('ABCD'.indexOf(q.correcta));
+  marcarRespuesta(GAME.orden,q,orig);
+  const pts=PUNTOS[nivel];
+  if(correcto){ GAME.score+=pts; GAME.hits++; GAME.racha++; GAME.mejor=Math.max(GAME.mejor,GAME.racha);
+    setFeedback(`✅ ¡Correcto! +${pts} punto${pts>1?'s':''}${q.exp?' — '+q.exp:''}`,'fb-ok'); flash('c'); }
+  else { GAME.score=Math.max(0,GAME.score-pts); GAME.miss++; GAME.racha=0;
+    setFeedback(timeout?`⏱ Tiempo agotado. −${pts} puntos`:`❌ Incorrecto. −${pts} puntos${q.exp?' — '+q.exp:''}`,'fb-'+(timeout?'to':'no')); flash('w'); }
+  addLog(CFG.nombre, nivel, correcto, pts, timeout);
+  updSolo();
+  setTimeout(()=>{ GAME.n++; GAME.ronda=GAME.n+1;
+    if(GAME.n>=CFG.nSolo) endSolo();
+    else { $('turnIndicator').textContent='ELIGE TU NIVEL DE RIESGO'; faseDificultad(); } },2400);
+}
+function endSolo(){
+  stopAllRings();
+  guardarRes({lugar:1, jugador:CFG.nombre, puntaje:GAME.score, aciertos:GAME.hits, fallos:GAME.miss, modo:'SOLO'});
+  renderPodio([{lugar:1,nombre:CFG.nombre,puntaje:GAME.score,aciertos:GAME.hits,fallos:GAME.miss}],
+    'RESULTADO — PRÁCTICA INDIVIDUAL');
+}
+
+/* ---------- MODOS CUERDA: VS CPU y DUELO ---------- */
+function startRope(vs){
+  const nomA = vs==='duelo' ? (($('inEqA').value.trim()||'EQUIPO AZUL').toUpperCase()) : CFG.nombre;
+  const nomR = vs==='duelo' ? (($('inEqR').value.trim()||'EQUIPO ROJO').toUpperCase()) : 'CPU';
+  GAME={mode:vs, vs, sp:0, sc:0, hp:0, mp:0, hc:0, mc:0, p1:nomA, p2:nomR,
+        turno:'blue', ronda:1, nivA:[], nivR:[]};
+  mostrarJuego((vs==='cpu'?'TIRA Y AFLOJA · ':'DUELO DE EQUIPOS · ')+$('inMateria').value+' → '+$('inTema').value);
+  $('cpuArea').classList.remove('hidden');
+  $('lblP').textContent=nomA; $('lblC').textContent=nomR;
+  updRope(); initRope();
+  faseRiesgo('blue');
+}
+function faseRiesgo(equipo){
+  GAME.turno=equipo;
+  $('questionArea').classList.add('hidden');
+  $('difficultyArea').classList.remove('hidden');
+  setFeedback('',''); actualizarBtnsDiff();
+  const ti=$('turnIndicator'), nEq = equipo==='blue'?GAME.p1:GAME.p2;
+  ti.textContent = (GAME.vs==='duelo'?'RONDA '+GAME.ronda+' · ':'')+'TURNO: '+nEq+' — ELIGE RIESGO';
+  ti.className = 'turn-ind turn-'+(equipo==='blue'?'blue':'red');
+  $('recDiv').textContent = GAME.vs==='duelo'
+    ? nEq+': elige el nivel en '+CFG.tDiff+'s o el sistema elegirá por ti. Gana quien logre '+CFG.meta+' puntos de ventaja.'
+    : 'Decide en '+CFG.tDiff+'s. VE = P·premio − (1−P)·castigo.';
+  startRing('diff', CFG.tDiff, ()=>{
+    const disp=['FACIL','MEDIO','DIFICIL'].filter(k=>APP.pools[k].length);
+    const lvl=disp[Math.floor(Math.random()*disp.length)];
+    toast('⏱ Tiempo agotado. Nivel asignado: '+NIVEL_LBL[lvl],'warn');
+    elegirNivel(lvl, equipo);
+  });
+}
+function elegirNivel(nivel, equipo){
+  stopRing('diff');
+  equipo = equipo || GAME.turno || 'blue';
+  const q=nextQ(nivel); if(!q){ toast('No hay preguntas disponibles','bad'); return; }
+  GAME.current={nivel,q,equipo};
+  if(GAME.mode==='solo') GAME.niveles.push(nivel);
+  else { if(equipo==='blue') GAME.nivA.push(nivel); else GAME.nivR.push(nivel); }
+  $('difficultyArea').classList.add('hidden');
+  const esSolo = GAME.mode==='solo';
+  const quien = esSolo ? 'PRÁCTICA' : (equipo==='blue' ? GAME.p1 : GAME.p2);
+  const onPick = esSolo ? (i,orig)=>responderSolo(i,orig,false) : (i,orig)=>responderRope(equipo,orig,false);
+  GAME.orden = renderQuestion(q,true,onPick,quien);
+  setFeedback('','');
+  startRing('quest', CFG.tQuest, esSolo ? ()=>responderSolo(-1,'X',true) : ()=>responderRope(equipo,'X',true));
+}
+function responderRope(equipo,orig,timeout){
+  stopRing('quest');
+  const {nivel,q}=GAME.current;
+  const correcto = !timeout && orig===('ABCD'.indexOf(q.correcta));
+  marcarRespuesta(GAME.orden,q,orig);
+  const pts=PUNTOS[nivel];
+  const quien = equipo==='blue'?GAME.p1:GAME.p2;
+  if(equipo==='blue'){
+    if(correcto){ GAME.sp+=pts; GAME.hp++; setFeedback('✅ '+quien+' acierta: +'+pts+(q.exp?' — '+q.exp:''),'fb-ok'); flash('c'); }
+    else { GAME.sp=Math.max(0,GAME.sp-pts); GAME.mp++; setFeedback((timeout?'⏱ '+quien+' no respondió':'❌ '+quien+' falla')+': −'+pts+(q.exp?' — '+q.exp:''),'fb-'+(timeout?'to':'no')); flash(timeout?'t':'w'); }
+  } else {
+    if(correcto){ GAME.sc+=pts; GAME.hc++; setFeedback('✅ '+quien+' acierta: +'+pts+(q.exp?' — '+q.exp:''),'fb-ok'); flash(GAME.vs==='cpu'?'w':'c'); }
+    else { GAME.sc=Math.max(0,GAME.sc-pts); GAME.mc++; setFeedback((timeout?'⏱ '+quien+' no respondió':'❌ '+quien+' falla')+': −'+pts+(q.exp?' — '+q.exp:''),'fb-'+(timeout?'to':'no')); flash(timeout?'t':(GAME.vs==='cpu'?'c':'w')); }
+  }
+  addLog(quien, nivel, correcto, pts, timeout);
+  updRope();
+  setTimeout(checkFinRope,2400);
+}
+function checkFinRope(){
+  if(Math.abs(GAME.sp-GAME.sc)>=CFG.meta) return endRope();
+  if(GAME.vs==='cpu'){
+    if(GAME.turno==='blue') return turnoCpu();
+    GAME.turno='blue'; GAME.ronda++; return faseRiesgo('blue');
+  }
+  if(GAME.turno==='blue'){ GAME.turno='red'; return faseRiesgo('red'); }
+  GAME.turno='blue'; GAME.ronda++; return faseRiesgo('blue');
+}
+function updRope(){
+  $('scoreP').textContent=GAME.sp; $('scoreCpu').textContent=GAME.sc;
+  $('hP').textContent=GAME.hp; $('mP').textContent=GAME.mp;
+  $('hC').textContent=GAME.hc; $('mC').textContent=GAME.mc;
+  ropeTarget=Math.max(-1,Math.min(1,(GAME.sp-GAME.sc)/CFG.meta));
+  const d=GAME.sp-GAME.sc, lbl=$('ropeLabel');
+  lbl.style.left=(50+ropeTarget*35)+'%';
+  lbl.textContent = Math.abs(d)<1 ? 'EQUILIBRIO' : (d>0? GAME.p1+' +'+d : GAME.p2+' +'+(-d));
+  updateStatsPanel();
+}
+function elegirNivelCpu(){
+  const d=GAME.sp-GAME.sc;
+  let pref = d>=4 ? ['FACIL','FACIL','FACIL','MEDIO','MEDIO','DIFICIL']
+           : d<=-4 ? ['DIFICIL','DIFICIL','DIFICIL','MEDIO','MEDIO','FACIL']
+           : ['MEDIO','MEDIO','MEDIO','MEDIO','FACIL','DIFICIL'];
+  let lvl=pref[Math.floor(Math.random()*pref.length)];
+  if(!APP.pools[lvl].length) lvl=['FACIL','MEDIO','DIFICIL'].find(k=>APP.pools[k].length)||lvl;
+  return lvl;
+}
+function turnoCpu(){
+  GAME.turno='red';
+  $('difficultyArea').classList.add('hidden'); $('questionArea').classList.add('hidden');
+  const ti=$('turnIndicator'); ti.textContent='TURNO DE LA CPU...'; ti.className='turn-ind t-red';
+  setTimeout(()=>{
+    const lvl=elegirNivelCpu(); const q=nextQ(lvl); if(!q){ toast('Sin preguntas','bad'); return; }
+    GAME.current={nivel:lvl,q,equipo:'red'};
+    GAME.nivR.push(lvl);
+    GAME.orden=renderQuestion(q,false,null,'TURNO CPU');
+    setFeedback('La CPU está analizando la pregunta...','');
+    startRing('quest', CFG.tQuest, ()=>{});
+    setTimeout(()=>{
+      const p={FACIL:CFG.pF,MEDIO:CFG.pM,DIFICIL:CFG.pD}[lvl];
+      const acierto=Math.random()<p;
+      const idxC='ABCD'.indexOf(q.correcta);
+      const orig=acierto?idxC:(GAME.orden[0]===idxC?GAME.orden[1]:GAME.orden[0]);
+      marcarRespuesta(GAME.orden,q,orig); stopRing('quest');
+      const pts=PUNTOS[lvl];
+      if(acierto){ GAME.sc+=pts; GAME.hc++; setFeedback('🤖 La CPU acertó ('+NIVEL_LBL[lvl]+'): +'+pts,'fb-no'); flash('w'); }
+      else { GAME.sc=Math.max(0,GAME.sc-pts); GAME.mc++; setFeedback('🤖 La CPU falló ('+NIVEL_LBL[lvl]+'): −'+pts,'fb-ok'); flash('c'); }
+      addLog('CPU', lvl, acierto, pts, false);
+      updRope();
+      setTimeout(checkFinRope,2400);
+    }, 1500+Math.random()*1800);
+  },700);
+}
+function endRope(){
+  stopAllRings();
+  const ganaA=GAME.sp>GAME.sc;
+  const eA={nombre:GAME.p1,puntaje:GAME.sp,aciertos:GAME.hp,fallos:GAME.mp};
+  const eR={nombre:GAME.p2,puntaje:GAME.sc,aciertos:GAME.hc,fallos:GAME.mc};
+  const modo = GAME.vs==='cpu' ? 'VS_CPU' : 'DUELO_2E';
+  guardarRes({lugar:ganaA?1:2, jugador:eA.nombre, puntaje:eA.puntaje, aciertos:eA.aciertos, fallos:eA.fallos, modo});
+  guardarRes({lugar:ganaA?2:1, jugador:eR.nombre, puntaje:eR.puntaje, aciertos:eR.aciertos, fallos:eR.fallos, modo});
+  renderPodio(ganaA?[{lugar:1,...eA},{lugar:2,...eR}]:[{lugar:1,...eR},{lugar:2,...eA}],
+    '🏆 PODIO — GANA '+(ganaA?GAME.p1:GAME.p2));
+}
+
+/* ---------- ONLINE MULTI-DISPOSITIVO ---------- */
+function mostrarJuego(info){
+  $('gamePanel').classList.remove('hidden');
+  $('podiumPanel').classList.add('hidden');
+  $('gInfo').textContent=info;
+  ['soloArea','cpuArea','onlineArea'].forEach(id=>$(id).classList.add('hidden'));
+  $('difficultyArea').classList.add('hidden'); $('questionArea').classList.add('hidden');
+  stopAllRings(); stopPoll(); detenerRope();
+}
+function hostedURL(){
+  if(location.protocol==='file:' || !location.origin || location.origin==='null') return null;
+  return location.origin + location.pathname;
+}
+function roomLink(){
+  const base=hostedURL();
+  return base ? base+'?room='+GAME.codigo : null;
+}
+function mostrarQR(){
+  const el=$('qrBox'); if(!el) return; el.innerHTML='';
+  const link=roomLink();
+  if(!link){ el.innerHTML='<p class="hint" style="color:#333;text-align:center;padding:10px">Publica esta página en internet (Netlify / GitHub Pages) para generar el QR con enlace directo.</p>'; return; }
+  try{ new QRCode(el,{text:link,width:190,height:190,correctLevel:QRCode.CorrectLevel.M}); }
+  catch(e){ el.innerHTML='<p class="hint" style="color:#333">QR no disponible</p>'; }
+}
+async function compartirSala(){
+  const link=roomLink();
+  const txt='🎮 ¡Únete a mi partida de Tira la Cuerda Matemática!\nCódigo de sala: '+GAME.codigo+(link?('\n'+link):'');
+  if(navigator.share){
+    try{ await navigator.share({title:'Tira la Cuerda Matemática', text:txt, url:link||undefined}); return; }
+    catch(e){ if(e && e.name==='AbortError') return; }
+  }
+  try{ await navigator.clipboard.writeText(txt); toast('✔ Invitación copiada al portapapeles'); }
+  catch(e){ toast(txt,'warn'); }
+}
+function compartirWhatsApp(){
+  const link=roomLink();
+  const txt='🎮 ¡Únete a mi partida de Tira la Cuerda Matemática!\nCódigo de sala: '+GAME.codigo+(link?('\n'+link):'');
+  window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
+}
+async function copiarLink(){
+  const link=roomLink();
+  const txt = link ? link+'  — Código: '+GAME.codigo : 'Código de sala: '+GAME.codigo;
+  try{ await navigator.clipboard.writeText(txt); toast('✔ Copiado: '+txt); }
+  catch(e){ toast('Copia manual: '+txt,'warn'); }
+}
+async function copiarCodigo(){
+  try{ await navigator.clipboard.writeText(GAME.codigo); toast('✔ Código copiado: '+GAME.codigo); }
+  catch(e){ toast('Código: '+GAME.codigo,'warn'); }
+}
+async function crearSala(){
+  const m=$('inMateria').value, t=$('inTema').value;
+  if(!m||!t){ toast('Selecciona materia y tema','warn'); return; }
+  if(!CFG.api){ toast('Configura la URL de la API primero','bad'); return; }
+  try{
+    toast('Creando sala en la nube...');
+    const r=await apiGet({action:'crearPartida', materia:m, tema:t, anfitrion:CFG.nombre,
+      nf:$('inNF').value, nm:$('inNM').value, nd:$('inND').value});
+    if(!r.ok) throw new Error(r.error);
+    GAME={mode:'online', role:'host', codigo:r.codigo, nombre:CFG.nombre, rondaLocal:0, respondido:false, advanceAt:null, ultimoEstado:'LOBBY'};
+    entrarOnline(); startPoll();
+  }catch(e){ toast('Error al crear sala: '+e.message,'bad'); }
+}
+async function unirseSala(){
+  const cod=$('inCodigoRoom').value.trim().toUpperCase();
+  if(!cod){ toast('Escribe el código de la sala','warn'); return; }
+  if(!CFG.api){ toast('Configura la URL de la API primero','bad'); return; }
+  try{
+    const r=await apiGet({action:'unirPartida', codigo:cod, nombre:CFG.nombre});
+    if(!r.ok) throw new Error(r.error);
+    GAME={mode:'online', role:'guest', codigo:cod, nombre:r.nombre, rondaLocal:0, respondido:false, advanceAt:null, ultimoEstado:'LOBBY'};
+    toast('✔ Conectado como '+r.nombre);
+    entrarOnline(); startPoll();
+  }catch(e){ toast('Error: '+e.message,'bad'); }
+}
+function entrarOnline(){
+  mostrarJuego('ONLINE MULTI-DISPOSITIVO · '+$('inMateria').value+' → '+$('inTema').value);
+  $('onlineArea').classList.remove('hidden');
+  $('roomCode').textContent=GAME.codigo;
+  $('rowIniciar').classList.toggle('hidden', GAME.role!=='host');
+  $('turnIndicator').textContent='SALA DE ESPERA — COMPARTIENDO CÓDIGO: '+GAME.codigo;
+  $('turnIndicator').className='turn-ind t-gold';
+  mostrarQR();
+}
+function startPoll(){ stopPoll(); poll(); POLL=setInterval(poll,2000); }
+function stopPoll(){ if(POLL){ clearInterval(POLL); POLL=null; } }
+async function poll(){
+  if(!GAME||GAME.mode!=='online') return;
+  try{
+    const st=await apiGet({action:'getEstado', codigo:GAME.codigo});
+    if(!st.ok) return;
+    if(st.estado==='LOBBY'){
+      renderStandings(st,true);
+      GAME.ultimoEstado='LOBBY';
+    } else if(st.estado==='JUGANDO'){
+      $('rowIniciar').classList.add('hidden');
+      const nuevo = (GAME.ultimoEstado!=='JUGANDO') || (st.ronda>GAME.rondaLocal);
+      if(nuevo && st.pregunta){
+        GAME.rondaLocal=st.ronda; GAME.respondido=false; GAME.advanceAt=null;
+        mostrarPreguntaOnline(st);
+      }
+      GAME.ultimoEstado='JUGANDO';
+      renderStandings(st,false);
+      if(GAME.role==='host'){
+        const todos=st.jugadores.length && st.jugadores.every(j=>j.respondio);
+        const transcurrido=Date.now()-(st.rondaInicio||0);
+        if(!GAME.advanceAt && (todos||transcurrido>(CFG.tQuest+8)*1000)) GAME.advanceAt=Date.now()+2500;
+        if(GAME.advanceAt && Date.now()>GAME.advanceAt){
+          GAME.advanceAt=null;
+          apiGet({action:'avanzarRonda', codigo:GAME.codigo, nombre:GAME.nombre}).catch(()=>{});
+        }
+      }
+    } else if(st.estado==='FINALIZADA'){ stopPoll(); finalizarOnline(); }
+  }catch(e){ /* reintenta en el próximo ciclo */ }
+}
+function renderStandings(st, lobby){
+  const js=[...st.jugadores].sort((a,b)=>b.puntaje-a.puntaje);
+  $('standings').innerHTML = js.map((j,i)=>
+    `<div class="st-row${norm(j.nombre)===norm(GAME.nombre)?' me':''}">
+      <span class="pos">${i+1}º</span>
+      <span class="nm">${j.anfitrion?'👑 ':''}${esc(j.nombre)}</span>
+      <span class="rdy">${j.respondio?'✅':'⏳'}</span>
+      <span class="pt">${j.puntaje} pts</span>
+    </div>`).join('') || '<div style="text-align:center;color:var(--muted);padding:10px">Esperando jugadores...</div>';
+  if(lobby) $('turnIndicator').textContent='SALA DE ESPERA · CÓDIGO: '+GAME.codigo+' · '+js.length+' jugador'+(js.length>1?'es':'')+' conectado'+(js.length>1?'s':'');
+}
+function mostrarPreguntaOnline(st){
+  const q={nivel:st.pregunta.nivel, q:st.pregunta.pregunta, opciones:st.pregunta.opciones,
+           correcta:st.pregunta.correcta, exp:st.pregunta.explicacion};
+  GAME.currentQ=q;
+  $('difficultyArea').classList.add('hidden');
+  $('turnIndicator').textContent=`RONDA ${st.ronda} / ${st.total} — ¡RESPONDE!`;
+  $('turnIndicator').className='turn-ind t-gold';
+  GAME.orden=renderQuestion(q,true,(i,orig)=>responderOnline(orig),'Ronda '+st.ronda);
+  setFeedback('',''); startRing('quest', CFG.tQuest, ()=>responderOnline('X'));
+}
+async function responderOnline(orig){
+  if(GAME.respondido) return;
+  GAME.respondido=true; stopRing('quest');
+  const btns=[...$('qOptions').children]; btns.forEach(b=>b.disabled=true);
+  try{
+    const r=await apiGet({action:'enviarRespuesta', codigo:GAME.codigo, nombre:GAME.nombre,
+      ronda:GAME.rondaLocal, respuesta:orig});
+    if(r.ok){
+      const q=GAME.currentQ;
+      marcarRespuesta(GAME.orden,q,orig==='X'?-99:Number(orig));
+      if(orig==='X'){ setFeedback('⏱ Tiempo agotado. Esperando al resto...','fb-to'); flash('t'); }
+      else if(r.acierto){ setFeedback(`✅ ¡Correcto! +${r.puntos} · Esperando al resto...`,'fb-ok'); flash('c'); }
+      else { setFeedback(`❌ Incorrecto (${r.puntos}) · Esperando al resto...`,'fb-no'); flash('w'); }
+    } else { setFeedback('⚠ '+r.error,'fb-to'); GAME.respondido=false; btns.forEach(b=>b.disabled=false); }
+  }catch(e){ setFeedback('⚠ Error de conexión. Reintentando...','fb-to'); GAME.respondido=false; }
+}
+async function finalizarOnline(){
+  stopAllRings();
+  try{
+    const r=await apiGet({action:'getResultados', codigo:GAME.codigo});
+    renderPodio(r.resultados||[], '🏆 PODIO FINAL — MULTIJUGADOR ONLINE');
+  }catch(e){ toast('No se pudieron cargar los resultados','bad'); }
+}
+async function iniciarOnline(){
+  try{
+    const r=await apiGet({action:'iniciarPartida', codigo:GAME.codigo, nombre:GAME.nombre});
+    if(!r.ok) toast(r.error,'bad'); else toast('🚀 ¡Partida iniciada en todos los dispositivos!');
+  }catch(e){ toast('Error: '+e.message,'bad'); }
+}
+
+/* ---------- PODIO ---------- */
+function renderPodio(lista, titulo){
+  const medals=['🥇','🥈','🥉'], suf=['er LUGAR','do LUGAR','er LUGAR'];
+  let html=`<h2 style="text-align:center">${titulo}</h2><div class="podium-row">`;
+  [1,0,2].forEach(i=>{ const p=lista[i]; if(!p) return;
+    html+=`<div class="pod ${i===0?'p1':''}"><div class="medal">${medals[i]}</div>
+      <div class="pn">${esc(p.nombre)}</div><div class="pp">${p.puntaje} pts</div>
+      <div class="ps">✓ ${p.aciertos??'—'} · ✗ ${p.fallos??'—'}</div><div class="pl">${i+1}${suf[i]}</div></div>`; });
+  html+='</div>';
+  if(lista.length>3) html+='<div class="pod-rest">'+lista.slice(3).map((p,i)=>
+    `<div class="pr-row"><b>${i+4}º</b> ${esc(p.nombre)} — ${p.puntaje} pts</div>`).join('')+'</div>';
+  html+=`<div class="controls-bar" style="justify-content:center">
+    <button class="btn btn-p" onclick="abandonar()"><i class="fas fa-house"></i> Volver al menú</button></div>`;
+  $('podiumBox').innerHTML=html;
+  $('podiumPanel').classList.remove('hidden');
+  $('podiumPanel').scrollIntoView({behavior:'smooth'});
+}
+async function guardarRes(r){
+  if(APP.fuente!=='Google Sheets') return;
+  try{ await apiGet({action:'guardarResultado', codigo:'-', ...r, materia:$('inMateria').value, tema:$('inTema').value}); }catch(e){}
+}
+
+/* ---------- ESTADÍSTICAS / VE ---------- */
+function updateEVTable(){
+  const tbody=$('evTableBody');
+  if(!tbody) return;
+  tbody.innerHTML='';
+  ['FACIL','MEDIO','DIFICIL'].forEach(d=>{
+    const p={FACIL:CFG.pF,MEDIO:CFG.pM,DIFICIL:CFG.pD}[d], pts=PUNTOS[d];
+    const ev=p*pts-(1-p)*pts;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-weight:700">${NIVEL_LBL[d]}</td><td>+${pts}</td><td>−${pts}</td>
+      <td>${(p*100).toFixed(0)}%</td><td class="${ev>=0?'pos':'neg'}">${ev>=0?'+':''}${ev.toFixed(2)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function riesgoTxt(arr){
+  if(!arr||!arr.length) return '—';
+  const avg=arr.reduce((s,k)=>s+PUNTOS[k],0)/arr.length;
+  return avg<1.5?'Bajo':(avg<2.5?'Medio':'Alto');
+}
+function pct(h,m){ const t=h+m; return t?Math.round(100*h/t)+'%':'0%'; }
+function updateStatsPanel(){
+  if(!GAME){ $('stModo').textContent='—'; $('stJugadas').textContent='0';
+    $('stPct1').textContent='—'; $('stPct2').textContent='—';
+    $('stRiesgo1').textContent='—'; $('stRiesgo2').textContent='—'; return; }
+  const nombres={solo:'PRÁCTICA',cpu:'VS CPU',duelo:'DUELO 2 EQUIPOS',online:'ONLINE'};
+  $('stModo').textContent=nombres[GAME.mode]||'—';
+  if(GAME.mode==='solo'){
+    $('stJugadas').textContent=GAME.n;
+    $('stPct1').textContent=pct(GAME.hits,GAME.miss);
+    $('stPct2').textContent='—';
+    $('stRiesgo1').textContent=riesgoTxt(GAME.niveles);
+    $('stRiesgo2').textContent='—';
+  } else if(GAME.mode==='cpu'||GAME.mode==='duelo'){
+    const jugadas=GAME.hp+GAME.mp+GAME.hc+GAME.mc;
+    $('stJugadas').textContent=jugadas;
+    $('stPct1').textContent=pct(GAME.hp,GAME.mp);
+    $('stPct2').textContent=pct(GAME.hc,GAME.mc);
+    $('stRiesgo1').textContent=riesgoTxt(GAME.nivA);
+    $('stRiesgo2').textContent=riesgoTxt(GAME.nivR);
+  } else { $('stJugadas').textContent='—'; $('stPct1').textContent='—'; $('stPct2').textContent='—';
+    $('stRiesgo1').textContent='—'; $('stRiesgo2').textContent='—'; }
+}
+
+/* ---------- TABS ---------- */
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  $('tab'+tab).classList.add('active');
+}
+
+/* ---------- MONTE CARLO ---------- */
+async function runMonteCarlo(){
+  const sA=$('mcStratA').value, sB=$('mcStratB').value;
+  const n=parseInt($('mcN').value);
+  $('mcRun').disabled=true; $('mcProgBar').style.display='block'; $('mcResults').style.display='block';
+  const res={a:0,b:0,d:0,rounds:0,sA:0,sB:0};
+  const batch=Math.max(25,Math.floor(n/50));
+  for(let i=0;i<n;i++){
+    const r=simGame(sA,sB);
+    if(r.winner==='A')res.a++; else if(r.winner==='B')res.b++; else res.d++;
+    res.rounds+=r.rounds; res.sA+=r.scoreA; res.sB+=r.scoreB;
+    if((i+1)%batch===0||i===n-1){ updateMc(res,i+1); await new Promise(r=>setTimeout(r,0)); }
+  }
+  $('mcRun').disabled=false;
+}
+function simGame(sa,sb){
+  const P={FACIL:CFG.pF,MEDIO:CFG.pM,DIFICIL:CFG.pD};
+  let a=0,b=0,rounds=0;
+  while(Math.abs(a-b)<CFG.meta && rounds<500){
+    rounds++;
+    const da=pickStrat(sa,a-b); Math.random()<P[da]?a+=PUNTOS[da]:a=Math.max(0,a-PUNTOS[da]);
+    if(Math.abs(a-b)>=CFG.meta)break;
+    const db=pickStrat(sb,b-a); Math.random()<P[db]?b+=PUNTOS[db]:b=Math.max(0,b-PUNTOS[db]);
+  }
+  let winner=null;
+  if(a-b>=CFG.meta)winner='A'; else if(b-a>=CFG.meta)winner='B';
+  return{winner,rounds,scoreA:a,scoreB:b};
+}
+function pickStrat(strat,adv){
+  switch(strat){
+    case 'conservative':return'FACIL';
+    case 'moderate':return'MEDIO';
+    case 'aggressive':return'DIFICIL';
+    case 'random':return['FACIL','MEDIO','DIFICIL'][Math.floor(Math.random()*3)];
+    case 'adaptive':
+      if(adv<-5)return'DIFICIL';
+      if(adv<-2)return'MEDIO';
+      return'FACIL';
+    default:return'MEDIO';
+  }
+}
+function updateMc(res,done){
+  $('mcProgFill').style.width=(done/parseInt($('mcN').value)*100)+'%';
+  $('mcProgText').textContent=`${done}/${$('mcN').value} simulaciones`;
+  $('mcBlue').textContent=res.a; $('mcRed').textContent=res.b; $('mcDraw').textContent=res.d;
+  const pA=res.a/done*100, pD=res.d/done*100, pB=res.b/done*100;
+  $('mcBarB').style.width=Math.max(pA,2)+'%'; $('mcBarB').textContent=pA>5?pA.toFixed(1)+'%':'';
+  $('mcBarD').style.width=Math.max(pD,1)+'%'; $('mcBarD').textContent=pD>3?pD.toFixed(1)+'%':'';
+  $('mcBarR').style.width=Math.max(pB,2)+'%'; $('mcBarR').textContent=pB>5?pB.toFixed(1)+'%':'';
+  $('mcAvgR').textContent=(res.rounds/done).toFixed(1);
+  $('mcAvgA').textContent=(res.sA/done).toFixed(1);
+  $('mcAvgB').textContent=(res.sB/done).toFixed(1);
+  $('mcRateA').textContent=pA.toFixed(1)+'%';
+}
+
+/* ---------- RANKING GLOBAL ---------- */
+async function cargarRanking(){
+  if(APP.fuente!=='Google Sheets'){ $('rankingBody').innerHTML='<p class="hint">⚠ Conecta la API para consultar el ranking (pega tu URL en API_DEFAULT).</p>'; return; }
+  try{
+    const r=await apiGet({action:'getRankingGlobal'});
+    const rows=(r.ranking||[]);
+    $('rankingBody').innerHTML = rows.length
+      ? `<table><tr><th>#</th><th>Jugador</th><th>Victorias</th><th>Partidas</th><th>Puntos acum.</th><th>Aciertos</th></tr>
+         ${rows.map((x,i)=>`<tr><td>${['🥇','🥈','🥉'][i]||(i+1)}</td><td><b>${esc(x.nombre)}</b></td><td>${x.victorias}</td><td>${x.partidas}</td><td>${x.puntos}</td><td>${x.aciertos}</td></tr>`).join('')}</table>`
+      : '<p class="hint">Aún no hay registros. ¡Juega la primera partida!</p>';
+  }catch(e){ $('rankingBody').innerHTML='<p class="hint">Error de conexión.</p>'; }
+}
+
+/* ---------- CUERDA (Canvas) ---------- */
+let ropeCv,ropeCtx,ropeW,ropeH,ropeOff=0,ropeTarget=0;
+function initRope(){
+  ropeCv=$('ropeCanvas'); ropeCtx=ropeCv.getContext('2d');
+  resizeRope(); window.removeEventListener('resize',resizeRope); window.addEventListener('resize',resizeRope);
+  cancelAnimationFrame(ropeRaf); loopRope();
+}
+function resizeRope(){
+  const rect=ropeCv.parentElement.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
+  ropeW=rect.width; ropeH=180;
+  ropeCv.width=ropeW*dpr; ropeCv.height=ropeH*dpr; ropeCtx.setTransform(dpr,0,0,dpr,0,0);
+}
+function loopRope(){ ropeOff+=(ropeTarget-ropeOff)*.08; drawRope(); ropeRaf=requestAnimationFrame(loopRope); }
+function detenerRope(){ cancelAnimationFrame(ropeRaf); ropeRaf=null; }
+function drawRope(){
+  const ctx=ropeCtx,w=ropeW,h=ropeH,off=ropeOff; if(!ctx)return;
+  const g=ctx.createLinearGradient(0,0,0,h); g.addColorStop(0,'#060a14'); g.addColorStop(1,'#0d1321');
+  ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='rgba(51,65,85,.14)'; ctx.lineWidth=1;
+  for(let x=0;x<w;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke()}
+  ctx.setLineDash([6,6]); ctx.strokeStyle='rgba(245,158,11,.5)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(w/2,0); ctx.lineTo(w/2,h); ctx.stroke(); ctx.setLineDash([]);
+  const ground=h-22, ry=ground-16, cx=w/2+off*w*.3;
+  const rg=ctx.createLinearGradient(0,ry-7,0,ry+7);
+  rg.addColorStop(0,'#c9a265'); rg.addColorStop(.5,'#a07830'); rg.addColorStop(1,'#6b4f0e');
+  ctx.strokeStyle=rg; ctx.lineWidth=13; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(38,ry); ctx.quadraticCurveTo(cx,ry+Math.sin(Date.now()/400)*2,w-38,ry); ctx.stroke();
+  dibEquipo(ctx,38,ground,'#3b82f6',true,off);
+  dibEquipo(ctx,w-38,ground,'#ef4444',false,off);
+  ctx.fillStyle='#f59e0b'; ctx.fillRect(cx-1.5,ry-32,3,32);
+  ctx.beginPath(); ctx.moveTo(cx+1,ry-32); ctx.lineTo(cx+17,ry-25); ctx.lineTo(cx+1,ry-18); ctx.fill();
+}
+function dibEquipo(ctx,x,ground,color,izq,off){
+  const lean=izq?Math.max(0,off*.35):Math.min(0,off*.35);
+  for(let i=0;i<3;i++){
+    const px=x+(izq?i*13:-i*13);
+    ctx.save(); ctx.translate(px,ground); ctx.rotate((izq?-0.28:0.28)+lean);
+    ctx.fillStyle=color; ctx.beginPath(); ctx.arc(0,-28,6.5,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=color; ctx.lineWidth=3; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(0,-22); ctx.lineTo(0,-8); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,-19); ctx.lineTo(izq?9:-9,-14); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(-5,0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(5,0); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* ---------- SALIR ---------- */
+function abandonar(){
+  stopAllRings(); stopPoll(); detenerRope(); GAME=null;
+  $('gamePanel').classList.add('hidden'); $('podiumPanel').classList.add('hidden');
+  updateStatsPanel();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============================================================
+   ARRANQUE AUTOMÁTICO (v3.4)
+   1. Aplica API_DEFAULT / parámetros de URL
+   2. Carga contenido DEMO al instante + intenta Google Sheets
+   3. Autoselecciona NÚMEROS RACIONALES y carga sus preguntas
+   4. Detecta salas por URL (?room=CODIGO)
+   ============================================================ */
+(async function init(){
+  const params = new URLSearchParams(location.search);
+  const pRoom = (params.get('room')||'').trim().toUpperCase();
+  const pApi  = (params.get('api')||'').trim();
+  if(pApi){ CFG.api = pApi; saveCfg(); }
+  if(!CFG.api && API_DEFAULT){ CFG.api = API_DEFAULT; saveCfg(); }   // ← conexión automática
+
+  cargarAjustesEnForm(); applyBranding();
+  updateConnBadge();
+  window.addEventListener('online', updateConnBadge);
+  window.addEventListener('offline', updateConnBadge);
+  setInterval(monitorConn, 30000);
+
+  actualizarBtnsDiff(); updateEVTable(); updateStatsPanel();
+
+  // Carga automática de contenido: DEMO instantáneo → Sheets si conecta
+  await cargarMaterias();
+  await asegurarSeleccion();
+
+  // Modal solo la primera vez (para pedir el nombre)
+  if(!LS.get('cfg',{}).nombre){
+    $('modalWelcome').classList.remove('hidden');
+    if(pRoom) $('wNombre').focus();
+  }
+
+  // Detección de sala por enlace compartido
+  if(pRoom){
+    APP.pendingRoom = pRoom;
+    if($('modalWelcome').classList.contains('hidden')){
+      selectModo('online');
+      $('inCodigoRoom').value = pRoom;
+      toast('🎮 Sala detectada: '+pRoom+' → presiona UNIRSE','warn');
+      setTimeout(()=>$('inCodigoRoom').scrollIntoView({behavior:'smooth',block:'center'}),400);
+    }
+  }
+})();
+
+/* ================================================================
+   v4 · MÓDULO "DEBATE EN LÍNEA · 2 EQUIPOS MONITOREADOS"
+   Modalidad A: primero responde (timbre + rebote) · Modalidad B: turnos
+   ================================================================ */
+const DEB_CIRC=2*Math.PI*42;
+const DEB={role:null,roleSel:null,codigo:null,hostToken:null,token:null,team:null,st:null,
+  offset:0,poll:null,tick:null,raf:null,ropeP:0,peek:false,autoNext:false,revAt:null,
+  revKey:null,advAt:0,buzzAt:0,presetCode:null};
+
+/* ---------- básicos ---------- */
+function debLink(){return location.origin+location.pathname+'?deb='+(DEB.st?DEB.st.codigo:'')}
+function debSaveSes(){LS.set('debSes',{codigo:DEB.codigo,token:DEB.token,hostToken:DEB.hostToken,role:DEB.role,team:DEB.team})}
+function debStopAll(){if(DEB.poll){clearInterval(DEB.poll);DEB.poll=null}if(DEB.tick){clearInterval(DEB.tick);DEB.tick=null}if(DEB.raf){cancelAnimationFrame(DEB.raf);DEB.raf=null}}
+
+async function debEstado(){
+  if(!CFG.api||!DEB.codigo)return{ok:false};
+  const qs=new URLSearchParams({action:'deb_estado',codigo:DEB.codigo,token:(DEB.role==='docente'?DEB.hostToken:DEB.token)||'',_:Date.now()});
+  const res=await fetch(CFG.api+'?'+qs.toString(),{method:'GET',redirect:'follow'});
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  const j=await res.json();
+  if(j.now)DEB.offset=j.now-Date.now();
+  if(j.ok&&j.st&&DEB.role){DEB.st=j.st;debRender()}
+  else if(j.err==='Sesión inválida'||j.err==='Sala no encontrada')debKick(j.err);
+  return j;
+}
+async function debMut(action,data){
+  if(!CFG.api){toast('El debate en línea necesita la API conectada (botón Ajustes)','bad');return null}
+  try{
+    const payload=Object.assign({action:action,codigo:DEB.codigo,token:(DEB.role==='docente'?DEB.hostToken:DEB.token)||''},data||{});
+    const res=await fetch(CFG.api+'?action='+action+'&_='+Date.now(),{method:'POST',redirect:'follow',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const j=await res.json();
+    if(j.now)DEB.offset=j.now-Date.now();
+    if(j.st&&DEB.role){DEB.st=j.st;debRender()}
+    if(!j.ok&&j.err)toast(j.err,'warn');
+    return j;
+  }catch(e){toast('Error de red: '+e.message,'bad');return null}
+}
+function debKick(msg){
+  debStopAll();DEB.role=null;DEB.st=null;DEB.codigo=null;DEB.token=null;DEB.hostToken=null;DEB.team=null;
+  LS.set('debSes',null);toast(msg||'Se perdió la conexión con la sala','warn');
+  const da=$('debateArea');if(da)da.classList.add('hidden');
+  const dc=$('debateCfg');if(dc)dc.classList.remove('hidden');
+}
+
+/* ---------- selección de modo y rol ---------- */
+function debSelect(){
+  APP.modoSel='debate';
+  document.querySelectorAll('.mode-card').forEach(c=>c.classList.remove('active'));
+  const cd=$('cardDebate');if(cd)cd.classList.add('active');
+  ['onlineCfg','duelCfg'].forEach(id=>{const el=$(id);if(el)el.classList.add('hidden')});
+  const dc=$('debateCfg');if(dc)dc.classList.remove('hidden');
+  const mh=$('modeHint');if(mh)mh.textContent='Debate: crea la sala (docente) o únete (equipo) con sus propios botones.';
+}
+function debRol(r){
+  DEB.roleSel=r;
+  $('debRoleDoc').classList.toggle('active',r==='docente');
+  $('debRoleEq').classList.toggle('active',r==='equipo');
+  $('debDocenteForm').classList.toggle('hidden',r!=='docente');
+  $('debEquipoForm').classList.toggle('hidden',r!=='equipo');
+}
+function debModHintUpd(){
+  const a=$('debModalidad').value==='A';
+  $('debModHint').innerHTML=a
+   ?'<b>MODALIDAD A · «Primero responde»:</b> la pregunta sale para los 2 equipos a la vez. El primero en timbrar gana el derecho a responder; si falla, <b>el otro equipo puede robarla</b>.'
+   :'<b>MODALIDAD B · «Turnos alternos»:</b> como el duelo ya estructurado: cada equipo elige su nivel de riesgo (+1/+2/+3) y responde en su turno; fallar resta.';
+}
+
+/* ---------- crear / unirse ---------- */
+function debNormPools(){
+  const out={FACIL:[],MEDIO:[],DIFICIL:[]};
+  const push=(nv,q)=>{
+    if(!nv||!out[nv]||!q||!q.pregunta||!Array.isArray(q.opciones)||q.opciones.length<2)return;
+    let ci=(typeof q.correcta==='number')?q.correcta:'ABCD'.indexOf(String(q.correcta||'').trim().toUpperCase());
+    if(!(ci>=0&&ci<Math.min(4,q.opciones.length)))return;
+    out[nv].push({nivel:nv,pregunta:String(q.pregunta).slice(0,300),
+      opciones:q.opciones.slice(0,4).map(o=>String(o).slice(0,140)),correcta:ci});
+  };
+  const P=APP.pools;
+  if(P&&((P.FACIL&&P.FACIL.length)||(P.MEDIO&&P.MEDIO.length)||(P.DIFICIL&&P.DIFICIL.length))){
+    ['FACIL','MEDIO','DIFICIL'].forEach(nv=>((P&&P[nv])||[]).forEach(q=>push(nv,q)));
+  }else if(APP.preguntas&&APP.preguntas.length){
+    APP.preguntas.forEach(q=>push(String(q.nivel||'').toUpperCase().trim(),q));
+  }
+  ['FACIL','MEDIO','DIFICIL'].forEach(k=>{out[k]=shuffle(out[k].slice())});
+  return out;
+}
+async function debCrear(){
+  if(!CFG.api){toast('El debate en línea necesita la API configurada (Ajustes)','bad');return}
+  const pools=debNormPools();
+  const total=pools.FACIL.length+pools.MEDIO.length+pools.DIFICIL.length;
+  if(total<3){toast('Carga primero las preguntas (sección 1) · mínimo 3 en total','bad');return}
+  DEB.role='docente';
+  const j=await debMut('deb_crear',{
+    modalidad:$('debModalidad').value,nTotal:parseInt($('debN').value)||5,
+    tBuzz:parseInt($('debTBuzz').value)||10,tResp:parseInt($('debTResp').value)||20,
+    tDif:parseInt($('debTDif').value)||8,meta:parseInt($('debMeta').value)||8,
+    castigo:$('debCastigo').checked,pools:pools});
+  if(j&&j.ok){
+    DEB.hostToken=j.hostToken;DEB.team=null;DEB.token=null;DEB.codigo=j.st.codigo;
+    debSaveSes();debShowGame();debRender();debMakeQr();
+    toast('Sala creada: '+DEB.codigo+' — espera a los 2 equipos');
+  }else{DEB.role=null}
+}
+async function debUnirse(){
+  if(!CFG.api){toast('El debate en línea necesita la API configurada (Ajustes)','bad');return}
+  const codigo=norm($('debCodEq').value);
+  const nombre=($('debNombreEq').value.trim()||'').toUpperCase().slice(0,18);
+  if(codigo.length<4){toast('Escribe el código de la sala (te lo dio el docente)','warn');return}
+  if(!nombre){toast('Escribe el nombre de tu equipo','warn');return}
+  DEB.role='equipo';
+  const j=await debMut('deb_unir',{codigo:codigo,nombre:nombre});
+  if(j&&j.ok){
+    DEB.team=j.team;DEB.token=j.token;DEB.codigo=j.st.codigo;
+    debSaveSes();debShowGame();debRender();
+    toast('Conectado como '+(DEB.team==='A'?'EQUIPO AZUL':'EQUIPO ROJO'));
+  }else{DEB.role=null}
+}
+function debShowGame(){
+  $('debateCfg').classList.add('hidden');
+  $('gamePanel').classList.remove('hidden');
+  $('debateArea').classList.remove('hidden');
+  if(!DEB.poll)DEB.poll=setInterval(()=>{debEstado().catch(()=>{})},1600);
+  if(!DEB.tick)DEB.tick=setInterval(debTick,250);
+  setTimeout(()=>$('gamePanel').scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+/* ---------- invitación ---------- */
+function debMakeQr(){
+  const box=$('debQrBox');if(!box)return;box.innerHTML='';
+  try{new QRCode(box,{text:debLink(),width:190,height:190,correctLevel:QRCode.CorrectLevel.M})}
+  catch(e){box.innerHTML='<p class="hint" style="color:#334">QR no disponible — comparte el enlace o el código</p>'}
+}
+function debWa(){if(!DEB.st)return;
+  const txt='DEBATE MATEMÁTICO · Tira la Cuerda. Entra desde tu dispositivo: '+debLink()+' y únete como EQUIPO con el código '+DEB.st.codigo;
+  window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank')}
+function debShare(){if(!DEB.st)return;
+  if(navigator.share)navigator.share({title:'Debate Matemático',text:'Código de sala: '+DEB.st.codigo,url:debLink()}).catch(()=>{});
+  else debCopy(debLink()+' · Código: '+DEB.st.codigo)}
+function debCopy(t){if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>toast('Copiado: '+t)).catch(()=>toast(t));else toast(t)}
+function debCopyCode(){if(DEB.st)debCopy(DEB.st.codigo)}
+function debCopyLink(){debCopy(debLink()+' · Código: '+(DEB.st?DEB.st.codigo:''))}
+
+/* ---------- acciones del juego ---------- */
+function debIniciar(){if(DEB.st&&DEB.st.fase==='sala')debMut('deb_iniciar')}
+async function debAvanzar(){const st=DEB.st;if(!st||st.fase!=='juego'||st.est!=='revelado')return;
+  if(Date.now()-DEB.advAt<1500)return;DEB.advAt=Date.now();DEB.revAt=null;
+  await debMut('deb_avanzar')}
+function debTerminar(){if(DEB.st&&DEB.st.fase==='juego'&&confirm('¿Terminar el debate ahora y mostrar los resultados?'))debMut('deb_terminar')}
+function debBuzz(){const st=DEB.st;if(!st||DEB.role!=='equipo'||st.modalidad!=='A'||st.est!=='buzz')return;
+  if(Date.now()-DEB.buzzAt<900)return;DEB.buzzAt=Date.now();
+  $('debBtnBuzz').disabled=true;debMut('deb_buzz')}
+function debElegir(nv){const st=DEB.st;if(!st||DEB.role!=='equipo'||st.modalidad!=='B'||st.est!=='elegir'||st.turno!==DEB.team)return;
+  debMut('deb_elegir',{nivel:nv})}
+function debResponder(i){const st=DEB.st;if(!st||DEB.role!=='equipo')return;
+  const ok=(st.modalidad==='A'&&(st.est==='resp'||st.est==='rebote')&&st.respTeam===DEB.team)||
+           (st.modalidad==='B'&&st.est==='responder'&&st.respTeam===DEB.team);
+  if(!ok)return;
+  document.querySelectorAll('#debQOpts .opt').forEach(b=>b.disabled=true);
+  debMut('deb_responder',{idx:i})}
+function debTogglePeek(){DEB.peek=!DEB.peek;if(DEB.st)debRender()}
+function debToggleAuto(){DEB.autoNext=!DEB.autoNext;DEB.revAt=null;
+  const b=$('debBtnAuto');b.innerHTML='<i class="fas fa-robot"></i> Auto: '+(DEB.autoNext?'ON':'OFF');
+  b.classList.toggle('btn-ok',DEB.autoNext)}
+async function debGuardarActa(){const st=DEB.st;if(!st||!st.final)return;
+  const j=await debMut('deb_guardar',{final:st.final});
+  if(j&&j.ok)toast('Acta guardada en la hoja "Debates"')}
+
+/* ---------- temporizadores ---------- */
+function debTick(){
+  const st=DEB.st;
+  if(!st||st.fase!=='juego'||!st.deadline||st.est==='revelado'){debHideRings()}
+  else{
+    const rest=Math.max(0,st.deadline-(Date.now()+DEB.offset));
+    const total=(st.est==='buzz')?st.tBuzz:((st.est==='elegir')?st.tDif:st.tResp);
+    if(st.est==='buzz')debRing('debBuzzTBox','debBuzzRing','debBuzzNum',rest,total,'var(--accent)');
+    else debRing('debAnsTBox','debAnsRing','debAnsNum',rest,total);
+  }
+  if(DEB.role==='docente'&&st&&st.fase==='juego'&&st.est==='revelado'&&DEB.autoNext){
+    if(DEB.revAt==null)DEB.revAt=Date.now();
+    const left=Math.max(0,Math.ceil((6500-(Date.now()-DEB.revAt))/1000));
+    const btn=$('debBtnNext');
+    if(btn&&!btn.disabled){btn.innerHTML='<i class="fas fa-forward"></i> SIGUIENTE ('+left+'s)';if(left<=0)debAvanzar()}
+  }else if(st&&st.est!=='revelado')DEB.revAt=null;
+}
+function debRing(boxId,ringId,numId,rest,total,color){
+  const other=boxId==='debBuzzTBox'?'debAnsTBox':'debBuzzTBox';
+  $(other).style.display='none';
+  const box=$(boxId);box.style.display='block';
+  const el=$(ringId);
+  el.style.strokeDasharray=DEB_CIRC;
+  el.style.strokeDashoffset=DEB_CIRC*(1-Math.max(0,Math.min(1,rest/(total*1000))));
+  el.style.stroke=color||(rest<=5000?'var(--bad)':'var(--ok)');
+  $(numId).textContent=Math.ceil(rest/1000);
+  if(boxId==='debAnsTBox')$('debAnsTLabel').textContent=(DEB.st&&DEB.st.est==='elegir')?'Elegir':'Responder';
+}
+function debHideRings(){['debBuzzTBox','debAnsTBox'].forEach(id=>{const b=$(id);if(b)b.style.display='none'})}
+
+/* ---------- cuerda ---------- */
+function debStartRope(){if(DEB.raf)return;
+  const loop=()=>{DEB.raf=requestAnimationFrame(loop);
+    const st=DEB.st,c=$('debRopeCanvas');
+    if(!st||st.fase!=='juego'||!c)return;
+    const A=st.teams.A||{score:0},R=st.teams.R||{score:0};
+    const diff=A.score-R.score;
+    const target=Math.max(-1,Math.min(1,diff/(st.meta||8)));
+    DEB.ropeP+=(target-DEB.ropeP)*0.12;
+    debDrawRope(DEB.ropeP,diff,st);
+  };DEB.raf=requestAnimationFrame(loop)}
+function debDrawRope(p,diff,st){
+  const c=$('debRopeCanvas');if(!c)return;
+  const dpr=window.devicePixelRatio||1,W=c.clientWidth||600,H=170;
+  if(c.width!==Math.round(W*dpr)||c.height!==Math.round(H*dpr)){c.width=Math.round(W*dpr);c.height=Math.round(H*dpr)}
+  const ctx=c.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#0b1322');g.addColorStop(1,'#101a2e');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='rgba(59,130,246,.10)';ctx.fillRect(0,0,W*.055,H);
+  ctx.fillStyle='rgba(239,68,68,.10)';ctx.fillRect(W*.945,0,W*.055,H);
+  ctx.strokeStyle='rgba(148,163,184,.28)';ctx.setLineDash([5,6]);
+  ctx.beginPath();ctx.moveTo(W/2,10);ctx.lineTo(W/2,H-10);ctx.stroke();ctx.setLineDash([]);
+  const y=H*.58,mid=W/2+p*(W*.30);
+  ctx.lineWidth=7;ctx.strokeStyle='rgba(0,0,0,.45)';
+  ctx.beginPath();ctx.moveTo(16,y+2);ctx.quadraticCurveTo(mid,y+22,W-16,y+2);ctx.stroke();
+  ctx.lineWidth=5;ctx.strokeStyle='#d19a3a';
+  ctx.beginPath();ctx.moveTo(16,y);ctx.quadraticCurveTo(mid,y+20,W-16,y);ctx.stroke();
+  ctx.fillStyle='#94a3b8';ctx.fillRect(W/2-1,y-40,2,80);
+  const flag=(x,color,dir)=>{ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(x,y-46);ctx.lineTo(x+dir*20,y-40);ctx.lineTo(x,y-34);ctx.closePath();ctx.fill();
+    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y-46);ctx.lineTo(x,y-14);ctx.stroke()};
+  flag(20,'#3b82f6',1);flag(W-20,'#ef4444',-1);
+  ctx.beginPath();ctx.arc(mid,y+10,12,0,Math.PI*2);
+  ctx.fillStyle=(p>.06)?'#3b82f6':((p<-.06)?'#ef4444':'#fbbf24');
+  ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#0b1322';ctx.stroke();
+  ctx.font='700 11px Orbitron,monospace';
+  ctx.textAlign='left';ctx.fillStyle='#93c5fd';ctx.fillText(((st.teams.A&&st.teams.A.nombre)||'AZUL').slice(0,16),18,20);
+  ctx.textAlign='right';ctx.fillStyle='#fca5a5';ctx.fillText(((st.teams.R&&st.teams.R.nombre)||'ROJO').slice(0,16),W-18,20);
+  const lbl=$('debRopeLabel');
+  if(lbl){const ad=Math.abs(diff);
+    lbl.textContent=ad<1?'EQUILIBRIO':('VENTAJA '+(diff>0?((st.teams.A&&st.teams.A.nombre)||'AZUL'):((st.teams.R&&st.teams.R.nombre)||'ROJO'))+' +'+ad)}
+}
+
+/* ---------- render principal ---------- */
+function debRender(){
+  const st=DEB.st;if(!st)return;
+  $('gamePanel').classList.remove('hidden');
+  $('debateArea').classList.remove('hidden');
+  ['soloArea','cpuArea','onlineArea','questionArea','difficultyArea'].forEach(id=>{const el=$(id);if(el)el.classList.add('hidden')});
+  const ti=$('turnIndicator');if(ti)ti.classList.add('hidden');
+  ['diffTimerBox','questTimerBox'].forEach(id=>{const el=$(id);if(el)el.style.display='none'});
+  $('debRoomCode').textContent=st.codigo;
+  $('gInfo').textContent='DEBATE '+(st.modalidad==='A'?'· PRIMERO RESPONDE':'· TURNOS ALTERNOS');
+  $('debSala').classList.toggle('hidden',st.fase!=='sala');
+  $('debJuego').classList.toggle('hidden',st.fase!=='juego');
+  $('debFin').classList.toggle('hidden',st.fase!=='fin');
+  $('debLogWrap').classList.toggle('hidden',st.fase==='sala');
+  if(st.fase==='sala')debRenderSala(st);
+  else if(st.fase==='juego')debRenderJuego(st);
+  else debRenderFin(st);
+  debRenderLog(st);
+}
+function debStandHtml(st){
+  const row=(t,col)=>{const tm=st.teams[t];
+    const badge=tm?(tm.presente?'<span class="badge b-ok"><i class="fas fa-wifi"></i> en línea</span>':'<span class="badge b-warn">reconectando…</span>'):'<span class="badge b-bad">vacante</span>';
+    return '<div class="st-row '+(DEB.team===t?'me':'')+'"><span class="pos" style="color:'+col+'"><i class="fas fa-flag"></i></span><span class="nm">'+(tm?esc(tm.nombre):'Esperando equipo '+(t==='A'?'AZUL':'ROJO')+'…')+'</span>'+badge+'</div>'};
+  return row('A','#93c5fd')+row('R','#fca5a5');
+}
+function debRenderSala(st){
+  const isDoc=DEB.role==='docente';
+  $('debInvite').classList.toggle('hidden',!isDoc);
+  $('debStandings').innerHTML=debStandHtml(st);
+  $('debRowIniciar').classList.toggle('hidden',!isDoc);
+  if(isDoc){
+    const ready=!!(st.teams.A&&st.teams.R);
+    const b=$('debBtnIniciar');b.disabled=!ready;
+    b.innerHTML=ready?'<i class="fas fa-flag-checkered"></i> INICIAR EL DEBATE':'<i class="fas fa-hourglass-half"></i> Esperando a los 2 equipos…';
+    $('debSalaInfo').innerHTML='Modalidad <b>'+(st.modalidad==='A'?'A · Primero responde':'B · Turnos alternos')+'</b> · <b>'+st.nTotal+'</b> preguntas · '+st.tResp+'s para responder'+(st.modalidad==='A'?' · '+st.tBuzz+'s para timbrar':' · '+st.tDif+'s para elegir nivel')+(st.castigo?' · fallo del timbre resta puntos':'');
+  }else{
+    const my=st.teams[DEB.team];
+    $('debSalaInfo').innerHTML='Eres el <b>'+(DEB.team==='A'?'EQUIPO AZUL':'EQUIPO ROJO')+'</b>'+(my?' ('+esc(my.nombre)+')':'')+'. Esperando al docente…';
+  }
+}
+function debRenderJuego(st){
+  const A=st.teams.A||{},R=st.teams.R||{},isDoc=DEB.role==='docente';
+  const nA=esc(A.nombre||'EQUIPO AZUL'),nR=esc(R.nombre||'EQUIPO ROJO');
+  $('debLblA').textContent=A.nombre||'EQUIPO AZUL';$('debLblR').textContent=R.nombre||'EQUIPO ROJO';
+  $('debScoreA').textContent=A.score||0;$('debScoreR').textContent=R.score||0;
+  const dot=t=>t&&t.presente?'<i class="fas fa-circle" style="color:#34d399;font-size:.55em"></i>':'<i class="far fa-circle" style="color:#64748b;font-size:.55em"></i>';
+  $('debDtA').innerHTML=dot(A)+' ✓ '+(A.ok||0)+' · ✗ '+(A.mal||0);
+  $('debDtR').innerHTML=dot(R)+' ✓ '+(R.ok||0)+' · ✗ '+(R.mal||0);
+  $('debProgBadge').textContent='PREGUNTA '+st.qIdx+' / '+st.nTotal;
+  $('debModBadge').textContent=st.modalidad==='A'?'MOD. A · TIMBRE + REBOTE':'MOD. B · TURNOS ALTERNOS';
+  $('debMonTitle').classList.toggle('hidden',!isDoc);
+  $('debHostCtrl').classList.toggle('hidden',!isDoc);
+  if(isDoc){
+    const canNext=st.est==='revelado';
+    $('debBtnNext').disabled=!canNext;
+    if(!DEB.autoNext||!canNext)$('debBtnNext').innerHTML='<i class="fas fa-forward"></i> '+(canNext?'SIGUIENTE PREGUNTA':'SIGUIENTE');
+    $('debBtnPeek').innerHTML=DEB.peek?'<i class="fas fa-eye-slash"></i> Ocultar respuestas':'<i class="fas fa-eye"></i> Ver respuestas';
+  }
+  const ind=$('debTurnInd');let cls='t-gold',txt='…';
+  if(st.modalidad==='A'){
+    if(st.est==='buzz')txt='¡PREGUNTA LANZADA! El primero en TIMBRAR responde';
+    else if(st.est==='resp'){cls=st.respTeam==='A'?'t-blue':'t-red';txt='TIMBRÓ '+(st.respTeam==='A'?nA:nR)+' — RESPONDE AHORA'}
+    else if(st.est==='rebote'){cls=st.respTeam==='A'?'t-blue':'t-red';txt='¡REBOTE! '+(st.respTeam==='A'?nA:nR)+' PUEDE ROBARLA'}
+    else if(st.est==='revelado')txt='PREGUNTA RESUELTA — se puede discutir la respuesta';
+  }else{
+    if(st.est==='elegir'){cls=st.turno==='A'?'t-blue':'t-red';txt='TURNO DE '+(st.turno==='A'?nA:nR)+' · ELIGE NIVEL DE RIESGO'}
+    else if(st.est==='responder'){cls=st.respTeam==='A'?'t-blue':'t-red';txt=(st.respTeam==='A'?nA:nR)+' RESPONDE · '+(NIVEL_LBL[st.nivel]||'')}
+    else if(st.est==='revelado')txt='PREGUNTA RESUELTA — se puede discutir la respuesta';
+  }
+  ind.className='turn-ind '+cls;ind.textContent=txt;
+  const showBuzz=!isDoc&&st.modalidad==='A'&&st.est==='buzz';
+  $('debBuzzArea').classList.toggle('hidden',!showBuzz);
+  if(showBuzz)$('debBtnBuzz').disabled=(Date.now()-DEB.buzzAt<900);
+  const showDif=!isDoc&&st.modalidad==='B'&&st.est==='elegir'&&st.turno===DEB.team;
+  $('debDifArea').classList.toggle('hidden',!showDif);
+  $('debQArea').classList.toggle('hidden',!st.cur);
+  if(st.cur){
+    $('debQHead').innerHTML='PREGUNTA '+st.qIdx+' / '+st.nTotal+' · <span style="color:'+(st.cur.nivel==='FACIL'?'#34d399':st.cur.nivel==='MEDIO'?'#fbbf24':'#f87171')+'">'+(NIVEL_LBL[st.cur.nivel]||'')+' ±'+(PUNTOS[st.cur.nivel]||1)+'</span>';
+    $('debQText').textContent=st.cur.pregunta;
+    $('debQOpts').innerHTML=debOptsHtml(st);
+    const f=debFbHtml(st,nA,nR);
+    $('debFb').innerHTML=f.html;$('debFb').className='feedback '+(f.cls||'');
+  }
+  if(st.est==='revelado'&&st.lastResult){
+    const k=st.qIdx+'|'+st.lastResult.resultado;
+    if(DEB.revKey!==k){DEB.revKey=k;
+      const r=st.lastResult.resultado;
+      flash(r==='acierto'||r==='robo'?'c':(r==='fallo'?'w':'t'))}
+  }else if(st.est!=='revelado')DEB.revKey=null;
+  debStartRope();
+}
+function debOptsHtml(st){
+  const cur=st.cur;if(!cur)return'';
+  const isDoc=DEB.role==='docente';
+  const canA=!isDoc&&(
+    (st.modalidad==='A'&&(st.est==='resp'||st.est==='rebote')&&st.respTeam===DEB.team)||
+    (st.modalidad==='B'&&st.est==='responder'&&st.respTeam===DEB.team));
+  const reveal=st.est==='revelado';
+  const showC=reveal||(isDoc&&DEB.peek);
+  const lr=st.lastResult,pk=st.pick;
+  return cur.opciones.map((o,i)=>{
+    let cls='';
+    if(showC&&cur.correcta===i)cls='ok';
+    else if(pk&&pk.idx===i&&st.modalidad==='A'&&(st.est==='rebote'||reveal))cls='no';
+    else if(reveal&&lr&&lr.idx===i&&lr.resultado!=='acierto'&&lr.resultado!=='robo')cls='no';
+    return '<button class="opt '+cls+'"'+(canA?'':' disabled')+' onclick="debResponder('+i+')"><b>'+'ABCD'[i]+'</b>'+esc(o)+'</button>';
+  }).join('');
+}
+function debFbHtml(st,nA,nR){
+  const nom=t=>t==='A'?nA:nR;
+  if(st.modalidad==='A'){
+    if(st.est==='buzz')return{html:'Lee con atención: <b>el primer equipo en timbrar</b> gana el derecho a responder.',cls:''};
+    if(st.est==='resp')return{html:(DEB.role==='equipo')?(st.respTeam===DEB.team?'<b>¡GANASTE EL TURNO!</b> Elige tu opción antes de que acabe el tiempo':'<b>'+nom(st.respTeam)+'</b> está respondiendo…'):'Respondiendo: <b>'+nom(st.respTeam)+'</b>',cls:'fb-to'};
+    if(st.est==='rebote')return{html:(DEB.role==='equipo')?(st.respTeam===DEB.team?'<b>¡El rival falló!</b> ROBA la pregunta — elige tu opción':'El rival tiene la opción de robo…'):'REBOTE · <b>'+nom(st.respTeam)+'</b> puede robar la pregunta',cls:'fb-to'};
+  }else{
+    if(st.est==='elegir')return{html:(DEB.role==='equipo'&&st.turno===DEB.team)?'<b>Tu turno:</b> elige el nivel de riesgo':'Esperando que <b>'+nom(st.turno)+'</b> elija su nivel de riesgo…',cls:''};
+    if(st.est==='responder')return{html:(DEB.role==='equipo'&&st.respTeam===DEB.team)?'<b>Responde ahora:</b> '+(NIVEL_LBL[st.nivel]||'')+' (±'+(PUNTOS[st.nivel]||1)+')':'<b>'+nom(st.respTeam)+'</b> responde · '+(NIVEL_LBL[st.nivel]||''),cls:'fb-to'};
+  }
+  if(st.est==='revelado'){
+    const lr=st.lastResult,cur=st.cur;
+    const letra=(cur&&cur.correcta!=null&&cur.correcta>=0)?'ABCD'[cur.correcta]:null;
+    const sol=letra!=null?(' · Respuesta correcta: <b>'+letra+'</b>) '+(cur?esc(cur.opciones[cur.correcta]):'')):'';
+    if(!lr)return{html:'Pregunta resuelta.'+sol,cls:'fb-to'};
+    if(lr.resultado==='acierto')return{html:'<i class="fas fa-check"></i> ¡Correcto! <b>'+nom(lr.equipo)+'</b> +'+lr.pts+sol,cls:'fb-ok'};
+    if(lr.resultado==='robo')return{html:'<i class="fas fa-bolt"></i> ¡ROBO! <b>'+nom(lr.equipo)+'</b> se lleva la pregunta +'+lr.pts+sol,cls:'fb-ok'};
+    if(lr.resultado==='fallo')return{html:st.modalidad==='B'?('<i class="fas fa-xmark"></i> <b>'+nom(lr.equipo)+'</b> falló '+lr.pts+sol):('<i class="fas fa-xmark"></i> Nadie acertó'+sol),cls:'fb-no'};
+    if(lr.resultado==='timeout')return{html:'<i class="fas fa-hourglass-end"></i> Tiempo agotado'+(st.modalidad==='B'?' <b>'+nom(lr.equipo)+'</b> '+lr.pts:'')+sol,cls:'fb-to'};
+    if(lr.resultado==='void')return{html:'Nadie timbró a tiempo · pregunta anulada'+sol,cls:'fb-to'};
+  }
+  return{html:'',cls:''};
+}
+function debRenderFin(st){
+  const f=st.final||{},A=st.teams.A||{},R=st.teams.R||{};
+  debHideRings();
+  let html='';
+  if(f.ganador==='A')html+='<div class="deb-win t-blue"><i class="fas fa-trophy"></i> GANÓ EL DEBATE: '+esc(f.nombreGanador)+'</div>';
+  else if(f.ganador==='R')html+='<div class="deb-win t-red"><i class="fas fa-trophy"></i> GANÓ EL DEBATE: '+esc(f.nombreGanador)+'</div>';
+  else html+='<div class="deb-win t-gold"><i class="fas fa-handshake"></i> '+(f.nombreGanador||'EMPATE TÉCNICO')+'</div>';
+  const pct=(ok,mal)=>(ok+mal>0)?Math.round(100*ok/(ok+mal))+'%':'—';
+  const card=t=>{const tm=t==='A'?A:R;if(!tm||!tm.nombre)return'';
+    const win=f.ganador===t;
+    return '<div class="pod '+(win?'p1':'')+'"><div class="medal"><i class="fas '+(win?'fa-trophy':'fa-medal')+'"></i></div><div class="pn">'+esc(tm.nombre)+'</div><div class="pp">'+(tm.score||0)+'</div><div class="ps">'+(tm.ok||0)+' aciertos · '+(tm.mal||0)+' fallos · '+pct(tm.ok||0,tm.mal||0)+' efectividad</div>'+(st.modalidad==='A'?'<div class="ps">Preguntas robadas: <b>'+(tm.robos||0)+'</b></div>':'')+(tm.riesgo!=null?'<div class="ps">Riesgo promedio: <b>'+tm.riesgo.toFixed(1)+'</b></div>':'')+'<div class="pl">EQUIPO '+(t==='A'?'AZUL':'ROJO')+'</div></div>'};
+  html+='<div class="podium-row">'+card('A')+card('R')+'</div>';
+  const rows=(st.log||[]).filter(l=>['acierto','fallo','robo','timeout','void'].indexOf(l.e)>=0)
+    .map(l=>'<div class="pr-row"><b style="min-width:46px">P'+l.r+'</b><span style="flex:1">'+esc(l.txt)+'</span></div>').join('');
+  if(rows)html+='<h3 class="deb-log-title"><i class="fas fa-scroll"></i> RESEÑA PREGUNTA POR PREGUNTA</h3><div class="pod-rest">'+rows+'</div>';
+  html+='<p class="hint" style="text-align:center;margin-top:10px">'+(f.antes?'Finalizado antes de tiempo. ':'')+'Modalidad '+st.modalidad+' · '+f.preguntas+' preguntas jugadas'+(f.fecha?' · '+esc(f.fecha):'')+'</p>';
+  if(DEB.role==='docente'&&CFG.api)html+='<div class="controls-bar" style="justify-content:center"><button class="btn btn-ok" onclick="debGuardarActa()"><i class="fas fa-floppy-disk"></i> Guardar acta en Sheets</button></div>';
+  $('debFinBox').innerHTML=html;
+}
+function debRenderLog(st){
+  const box=$('debLog');if(!box)return;
+  const L=st.log||[];
+  if(!L.length){box.innerHTML='<div style="color:var(--muted);text-align:center;padding:12px">Los eventos del debate aparecerán aquí en vivo…</div>';return}
+  const ico={inicio:'fa-play',conect:'fa-plug',buzz:'fa-bell',acierto:'fa-check',fallo:'fa-xmark',robo:'fa-bolt',rebote:'fa-rotate',timeout:'fa-hourglass-end',void:'fa-ban',nivel:'fa-layer-group',fin:'fa-flag-checkered'};
+  box.innerHTML=L.slice(-70).reverse().map(l=>'<div class="log-entry"><span class="le-r">'+l.r+'</span><span class="le-t" style="color:'+(l.t==='A'?'#93c5fd':(l.t==='R'?'#fca5a5':'var(--muted)'))+'">'+(l.t==='A'?'AZUL':(l.t==='R'?'ROJO':'—'))+'</span><span class="le-d '+l.d+'">'+l.d+'</span><span style="flex:1;font-size:.88em"><i class="fas '+(ico[l.e]||'fa-circle')+'" style="color:var(--muted);margin-right:4px"></i>'+esc(l.txt)+'</span></div>').join('');
+}
+
+/* ---------- integración con el juego existente + inicio ---------- */
+function debLeaveIfAny(){
+  debStopAll();
+  DEB.role=null;DEB.roleSel=null;DEB.st=null;DEB.codigo=null;DEB.token=null;DEB.hostToken=null;DEB.team=null;DEB.revAt=null;DEB.revKey=null;
+  const da=$('debateArea');if(da)da.classList.add('hidden');
+  const dc=$('debateCfg');if(dc)dc.classList.add('hidden');
+  const cd=$('cardDebate');if(cd)cd.classList.remove('active');
+}
+(function(){
+  const _sel=window.selectModo;
+  window.selectModo=function(m){
+    if(m==='debate'){debSelect();return}
+    debLeaveIfAny();
+    return _sel?_sel(m):undefined;
+  };
+  const _bc=window.btnComenzarClick;
+  window.btnComenzarClick=function(){
+    if(APP.modoSel==='debate'){toast('En el modo DEBATE usa los botones de su propia configuración','warn');return}
+    return _bc?_bc():undefined;
+  };
+  const _ab=window.abandonar;
+  window.abandonar=function(){debLeaveIfAny();return _ab?_ab():undefined};
+  debModHintUpd();
+  try{
+    const q=new URLSearchParams(location.search);
+    if(q.get('deb')){
+      DEB.presetCode=norm(q.get('deb'));
+      setTimeout(()=>{
+        debSelect();debRol('equipo');
+        $('debCodEq').value=DEB.presetCode;
+        if(CFG.nombre)$('debNombreEq').value=String(CFG.nombre).slice(0,18);
+        toast('Código de debate detectado: '+DEB.presetCode+' — escribe el nombre de tu equipo');
+      },500);
+    }
+  }catch(e){}
+  const ses=LS.get('debSes',null);
+  if(ses&&ses.codigo&&(ses.token||ses.hostToken)){
+    Object.assign(DEB,{codigo:ses.codigo,token:ses.token||null,hostToken:ses.hostToken||null,role:ses.role||'equipo',team:ses.team||null});
+    setTimeout(()=>{
+      debEstado().then(j=>{
+        if(j&&j.ok){debShowGame();toast('Reconectado a la sala '+DEB.st.codigo)}
+        else{LS.set('debSes',null);DEB.role=null;DEB.st=null;DEB.codigo=null;DEB.token=null;DEB.hostToken=null;DEB.team=null}
+      }).catch(()=>{});
+    },900);
+  }
+})();
+
+</script>
+</body>
+</html>
